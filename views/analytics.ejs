@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Analytics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Open Sans', sans-serif;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #F9F8F3;
+    }
+
+    h1 {
+      color: #556B2F;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    /* Containers for buttons to keep layout consistent */
+    .button-form {
+      margin: 15px 0; /* Uniform spacing for each "form" containing a button */
+      text-align: center;
+    }
+
+    /* Styling for main large buttons (like "Back to Home") */
+    .button-form button {
+      display: block;
+      width: 100%;
+      max-width: 200px;
+      margin: 0 auto; /* center the button horizontally */
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: 700;
+      background: #A0522D; /* Rust color default */
+      color: #fff;
+      border: 2px solid #8C4528; /* subtle trim */
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .button-form button:hover {
+      background: #8C4528; /* Hover effect matches home page */
+    }
+
+    select {
+      margin: 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+
+    #chart-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    /* New container for the dropdown and view button inline */
+    .exercise-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px; /* Slight spacing from the title/paragraph */
+    }
+
+    /* Olive button styling for the "View" button */
+    .olive-button {
+      background-color: #556B2F;
+      color: white;
+      padding: 12px 15px; /* Smaller padding for a smaller button */
+      font-size: 17px;   /* Slightly smaller font */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .olive-button:hover {
+      background-color: #3B4F1A; /* Darker olive on hover */
+    }
+  </style>
+</head>
+<body>
+  <h1>Analytics</h1>
+  <p>Select an exercise to view your progress over time.</p>
+
+  <!-- Inline container for dropdown and "View" button -->
+  <div class="exercise-container">
+    <!-- Dropdown for exercises -->
+    <select id="exercise-select">
+      <% exercises.forEach(ex => { %>
+        <option value="<%= ex.exercise_name %>"><%= ex.exercise_name %></option>
+      <% }); %>
+    </select>
+
+    <!-- "View" button using olive styling -->
+    <button type="button" onclick="fetchAnalyticsData()" class="olive-button">View</button>
+  </div>
+
+  <div id="chart-container">
+    <canvas id="progressChart"></canvas>
+  </div>
+
+  <!-- Back to Home button -->
+  <form action="/generate-workout" method="GET" class="button-form">
+    <button type="submit">Back to Home</button>
+  </form>
+
+  <script>
+    let chartInstance;
+
+    async function fetchAnalyticsData() {
+      const exercise_name = document.getElementById('exercise-select').value;
+      const response = await fetch('/analytics/data', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ exercise_name })
+      });
+      const result = await response.json();
+      if (result.error) {
+        alert(result.error);
+        return;
+      }
+
+      const { labels, dataAvgWeight, dataAvgReps, dataTotalLoad } = result;
+      renderChart(labels, dataAvgWeight, dataAvgReps, dataTotalLoad);
+    }
+
+    function renderChart(labels, dataAvgWeight, dataAvgReps, dataTotalLoad) {
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      
+      // If there's an existing chart, destroy it before creating a new one
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Avg Weight (lbs)',
+              data: dataAvgWeight,
+              borderColor: 'rgba(160,82,45, 1)', // rust color
+              backgroundColor: 'rgba(160,82,45, 0.2)',
+              fill: true,
+              tension: 0.1
+            },
+            {
+              label: 'Avg Reps',
+              data: dataAvgReps,
+              borderColor: 'rgba(85,107,47,1)', // olive color
+              backgroundColor: 'rgba(85,107,47,0.2)',
+              fill: true,
+              tension: 0.1
+            },
+            {
+              label: 'Total Load (AvgWeight * AvgReps)',
+              data: dataTotalLoad,
+              borderColor: 'rgba(70,130,180,1)', // steelblue
+              backgroundColor: 'rgba(70,130,180,0.2)',
+              fill: true,
+              tension: 0.1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Dashboard</title>
+  <!-- Import Google Font for a clean look -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* 
+      Styling for the Dashboard page.
+      Use the same earthy color scheme and single-column layout.
+    */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+      background: #F9F8F3; /* Off-white background */
+      color: #333;
+      max-width: 600px; /* Keep width narrow for single column */
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: #556B2F; /* Olive green heading */
+      margin-bottom: 20px;
+    }
+
+    a {
+      display: inline-block;
+      margin: 10px 5px;
+      padding: 10px 20px;
+      background: #A0522D; /* Rust color for links styled as buttons */
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+
+    a:hover {
+      background: #8C4528; /* Darker rust on hover */
+    }
+  </style>
+</head>
+<body>
+  <!-- Dashboard page:
+       Displays the user's email (passed in from the server)
+       and provides navigation to generate a workout or logout.
+  -->
+
+  <h1>Welcome, <%= email %></h1>
+  <!-- Link to generate a workout -->
+  <a href="/generate-workout">Generate a Workout</a><br><br>
+  <!-- Link to logout of the application -->
+  <a href="/logout">Logout</a>
+</body>
+</html>

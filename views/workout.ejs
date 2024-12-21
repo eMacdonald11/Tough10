@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Workout Preview</title>
+  <!-- Google Font and styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /*
+      Workout preview page:
+      Shows the generated workout and offers regeneration or start workout options.
+    */
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      text-align: center;
+      background: #F9F8F3;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: #556B2F;
+      margin-bottom: 20px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      margin: 10px 0;
+      background: #FFF7F0;
+      padding: 10px;
+      border: 1px solid #EEE;
+      border-radius: 5px;
+    }
+
+    strong {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    p {
+      margin: 5px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #A0522D;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 10px 5px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #8C4528;
+    }
+
+    /* If user data is present, show performance details */
+  </style>
+</head>
+<body>
+  <!-- Workout preview page:
+       Lists out the exercises chosen for the workout and allows
+       user to regenerate or start the workout.
+  -->
+
+  <h1>Your Workout</h1>
+
+  <ul>
+    <% workout.forEach((exercise, index) => { %>
+      <li>
+        <strong><%= exercise.exercise_name || 'Exercise Name Not Available' %></strong>
+        <% if (exercise.lastPerformance) { %>
+          <p>Last Performance: Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs,
+          Avg Reps: <%= exercise.lastPerformance.averageReps %></p>
+        <% } else { %>
+          <p>No previous performance data</p>
+        <% } %>
+      </li>
+    <% }); %>
+  </ul>
+
+  <!-- Button to regenerate workout (if needed) -->
+  <form action="/regenerate-workout" method="POST">
+    <button type="submit">Regenerate Workout</button>
+  </form>
+
+  <!-- Button to start the workout -->
+  <form action="/start-workout" method="POST">
+    <button type="submit">Start Workout</button>
+  </form>
+</body>
+</html>

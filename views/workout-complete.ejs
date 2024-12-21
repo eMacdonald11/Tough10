@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Workout Complete!</title>
+  <!-- Use the same font and styling approach -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /*
+      workout-complete.ejs:
+      Displays a celebratory message after finishing the entire workout.
+      Consistent styling with earthy tones and clean UI.
+    */
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      text-align: center;
+      background: #F9F8F3;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: #556B2F;
+      margin-bottom: 20px;
+    }
+
+    p {
+      margin: 20px 0;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    /* Add some celebratory emoji for now:
+       Later, consider adding subtle confetti animations using CSS or a small GIF.
+    */
+    .celebration {
+      font-size: 40px;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #A0522D; /* Rust color */
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 20px 5px;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #8C4528;
+    }
+  </style>
+</head>
+<body>
+  <!-- Workout Complete Page:
+       Informs the user they have finished the entire workout, offers celebratory emojis,
+       and a button to return to the workout generation screen.
+  -->
+  <h1>Workout Completed!</h1>
+
+  <div class="celebration">🎉🎉🎉</div>
+  <p>You made it.</p>
+  
+  <!-- Button to return to workout generation page -->
+  <form action="/generate-workout" method="GET">
+    <button type="submit">Return Home</button>
+  </form>
+</body>
+</html>

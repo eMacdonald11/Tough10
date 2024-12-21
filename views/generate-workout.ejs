@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Generate Workout</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* 
+      Mobile-first single-column layout
+      Using .button-form to unify spacing for all forms
+    */
+    body {
+      font-family: 'Open Sans', sans-serif;
+      text-align: center;
+      background: #F9F8F3;
+      color: #333;
+      max-width: 600px; 
+      margin: 0 auto;
+      padding: 20px;
+      overflow-x: hidden; 
+    }
+
+    h1 {
+      color: #556B2F;
+      margin-bottom: 20px;
+      font-size: 24px;
+    }
+
+    .button-form {
+      margin: 15px 0; /* uniform vertical spacing for each form */
+      text-align: center;
+    }
+    .button-form button {
+      display: block;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto; /* center horizontally */
+      padding: 15px 25px;
+      font-size: 16px;
+      font-weight: 700;
+      background: #A0522D; /* Rust color by default */
+      color: #fff;
+      border: 2px solid #8C4528; /* subtle trim color */
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .button-form button:hover {
+      background: #8C4528;
+    }
+
+    /* "Start Workout" button special style in olive green */
+    .start-workout-button {
+      background: #556B2F !important;
+      border-color: #3F4E24 !important;
+    }
+    .start-workout-button:hover {
+      background: #3F4E24 !important;
+    }
+
+    select {
+      font-size: 16px;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 15px 0;
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .workout-item {
+      margin-bottom: 20px;
+      font-size: 16px;
+      background: #FFF7F0;
+      padding: 10px;
+      border: 1px solid #EEE;
+      border-radius: 5px;
+      text-align: left;
+      max-width: 300px;
+      margin: 10px auto; /* center and consistent width */
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 20px 0;
+    }
+    li {
+      margin: 10px 0;
+    }
+
+    p {
+      font-size: 16px;
+      margin: 10px 0;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      select, .button-form button {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
+
+  <!-- Muscle Group Selection Form -->
+  <form action="/generate-workout" method="POST" class="button-form">
+    <p style="font-weight: 600;">Area of Focus:</p>
+    <select name="muscleGroup" required>
+      <option value="legs">Legs</option>
+      <option value="shouldersAndBack">Shoulders and Back</option>
+      <option value="chestArmsAndAbs">Chest, Arms, and Abs</option>
+    </select>
+    <button type="submit">Generate Workout</button>
+  </form>
+
+  <% if (workout && workout.length > 0) { %>
+    <ul>
+      <% workout.forEach((exercise, index) => { %>
+        <li class="workout-item">
+          <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong><br>
+          <% if (exercise.lastPerformance) { %>
+            Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
+            Avg Reps: <%= exercise.lastPerformance.averageReps %>
+          <% } else { %>
+            No performance data available
+          <% } %>
+        </li>
+      <% }); %>
+    </ul>
+    <!-- “Start Workout” Button in olive green -->
+    <form action="/start-workout" method="POST" class="button-form">
+      <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
+      <button type="submit" class="start-workout-button">Start Workout</button>
+    </form>
+  <% } %>
+
+  <!-- NEW: "Reporting" button => placed above the Info button, matching color & spacing -->
+  <form action="/analytics" method="GET" class="button-form">
+    <button type="submit">Reporting</button>
+  </form>
+
+  <!-- Info & Logout Buttons below the Reporting button -->
+  <form action="/info" method="GET" class="button-form">
+    <button type="submit">Info</button>
+  </form>
+
+  <form action="/logout" method="POST" class="button-form">
+    <button type="submit">Logout</button>
+  </form>
+</body>
+</html>
