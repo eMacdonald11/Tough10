@@ -7,7 +7,10 @@ const bcrypt = require('bcrypt'); // Library for hashing passwords securely
 const supabase = require('./supabase'); // Supabase client for interacting with the database
 
 const app = express(); // Initialize the Express app
-const PORT = 3000; // Define the port where the app will run
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 /* ==========================
    Middleware Setup
@@ -25,11 +28,6 @@ app.use(session({
 // Set EJS as the templating engine and specify the views directory
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Start the server and listen on the defined PORT
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
 
 /* ==========================
    Helper Functions
