@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Workout Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -11,43 +12,62 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 600px;
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
+      box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from default */
     }
 
     ul {
       list-style-type: none;
       padding: 0;
-      margin: 20px 0;
+      margin: 1.25rem 0; /* Changed from 20px to rem units */
     }
 
     li {
-      margin: 10px 0;
+      margin: 0.625rem 0; /* Changed from 10px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
     }
 
     button {
-      padding: 15px 25px; /* Larger for mobile tapping */
-      font-size: 16px;
-      margin: 15px 5px;
-      background: #A0522D;
+      padding: 0.625rem 1.25rem; /* Changed from 15px 25px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
+      background: #A0522D; /* Rust color */
       color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      margin: 1.25rem 0.3125rem; /* Changed from 15px 5px to rem units */
       transition: background 0.3s ease;
+      box-sizing: border-box;
     }
 
     button:hover {
       background: #8C4528;
     }
 
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
+      body {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      button {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>

@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
   <title>Workout Complete!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <!-- Use the same font and styling approach -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     /*
       workout-complete.ejs:
@@ -18,20 +20,22 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 600px;
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
+      box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from default */
     }
 
     p {
-      margin: 20px 0;
-      font-size: 18px;
+      margin: 1.25rem 0; /* Changed from 20px to rem */
+      font-size: 1.125rem; /* Changed from 18px to rem */
       line-height: 1.4;
     }
 
@@ -39,24 +43,57 @@
        Later, consider adding subtle confetti animations using CSS or a small GIF.
     */
     .celebration {
-      font-size: 40px;
-      margin: 20px 0;
+      font-size: 2.5rem; /* Changed from 40px to rem units */
+      margin: 1.25rem 0; /* Changed from 20px to rem */
     }
 
     button {
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 0.625rem 1.25rem; /* Changed from 10px 20px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
       background: #A0522D; /* Rust color */
       color: #fff;
       border: none;
-      border-radius: 5px;
+      border-radius: 0.3125rem; /* Changed from 5px to rem units */
       cursor: pointer;
-      margin: 20px 5px;
+      margin: 1.25rem 0.3125rem; /* Changed from 20px 5px to rem units */
       transition: background 0.3s ease;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 300px; /* Optional: limit max-width on larger screens */
     }
 
     button:hover {
       background: #8C4528;
+    }
+
+    /* Container to center the button */
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
+      body {
+        padding: 2rem;
+      }
+      button {
+        width: auto; /* Allow button to size based on content on larger screens */
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      button {
+        max-width: 100%; /* Allow button to take full width on small screens */
+      }
+      .celebration {
+        font-size: 2rem; /* Slightly smaller on very small screens */
+      }
     }
   </style>
 </head>
@@ -71,8 +108,10 @@
   <p>You made it.</p>
   
   <!-- Button to return to workout generation page -->
-  <form action="/generate-workout" method="GET">
-    <button type="submit">Return Home</button>
-  </form>
+  <div class="button-container">
+    <form action="/generate-workout" method="GET">
+      <button type="submit">Return Home</button>
+    </form>
+  </div>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Workout Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <!-- Google Font and styling for consistency -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,30 +17,50 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 600px;
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
+      box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
     }
 
     a {
       display: inline-block;
-      padding: 10px 20px;
+      padding: 0.625rem 1.25rem; /* Changed from 10px 20px to rem units */
       background: #A0522D;
       color: #fff;
       text-decoration: none;
       border-radius: 5px;
-      margin: 10px 5px;
+      margin: 0.625rem 0.3125rem; /* Changed from 10px 5px to rem */
       transition: background 0.3s ease;
+      font-size: 1rem; /* Added font size */
+      box-sizing: border-box;
     }
 
     a:hover {
       background: #8C4528;
+    }
+
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
+      body {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      a {
+        max-width: 100%;
+      }
     }
   </style>
 </head>

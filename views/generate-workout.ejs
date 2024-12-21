@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Generate Workout</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -16,29 +17,30 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 600px; 
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
+      box-sizing: border-box;
       overflow-x: hidden; 
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 20px;
-      font-size: 24px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
     }
 
     .button-form {
-      margin: 15px 0; /* uniform vertical spacing for each form */
+      margin: 1rem 0; /* uniform vertical spacing for each form */
       text-align: center;
     }
     .button-form button {
       display: block;
       width: 100%;
-      max-width: 300px;
+      max-width: 100%; /* Changed from 300px to 100% */
       margin: 0 auto; /* center horizontally */
-      padding: 15px 25px;
-      font-size: 16px;
+      padding: 0.75rem 1.25rem; /* Changed from 15px 25px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
       font-weight: 700;
       background: #A0522D; /* Rust color by default */
       color: #fff;
@@ -46,6 +48,7 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
+      box-sizing: border-box;
     }
     .button-form button:hover {
       background: #8C4528;
@@ -61,43 +64,53 @@
     }
 
     select {
-      font-size: 16px;
-      padding: 10px;
+      font-size: 1rem; /* Changed from 16px to 1rem */
+      padding: 0.625rem; /* Changed from 10px to rem units */
       border-radius: 5px;
-      margin: 15px 0;
+      margin: 1rem 0;
       width: 100%;
-      max-width: 300px;
+      max-width: 100%; /* Changed from 300px to 100% */
+      box-sizing: border-box;
     }
 
     .workout-item {
-      margin-bottom: 20px;
-      font-size: 16px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
       background: #FFF7F0;
-      padding: 10px;
+      padding: 0.625rem; /* Changed from 10px to rem units */
       border: 1px solid #EEE;
       border-radius: 5px;
       text-align: left;
-      max-width: 300px;
-      margin: 10px auto; /* center and consistent width */
+      width: 100%;
+      max-width: 100%; /* Changed from 300px to 100% */
+      box-sizing: border-box;
+      margin: 0.625rem auto; /* Changed from 10px auto to rem units */
     }
 
     ul {
       list-style-type: none;
       padding: 0;
-      margin: 20px 0;
+      margin: 1.25rem 0; /* Changed from 20px to rem units */
     }
     li {
-      margin: 10px 0;
+      margin: 0.625rem 0; /* Changed from 10px to rem units */
     }
 
     p {
-      font-size: 16px;
-      margin: 10px 0;
+      font-size: 1rem; /* Changed from 16px to 1rem */
+      margin: 0.625rem 0; /* Changed from 10px to rem units */
+    }
+
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
+      body {
+        padding: 2rem;
+      }
     }
 
     @media (max-width: 600px) {
       body {
-        padding: 10px;
+        padding: 1rem;
       }
       select, .button-form button {
         max-width: 100%;

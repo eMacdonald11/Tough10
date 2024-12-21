@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Analytics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -9,21 +10,24 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      max-width: 600px;
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
+      box-sizing: border-box;
       background: #F9F8F3;
+      color: #333;
+      overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 20px;
-      font-size: 24px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
     }
 
     /* Containers for buttons to keep layout consistent */
     .button-form {
-      margin: 15px 0; /* Uniform spacing for each "form" containing a button */
+      margin: 1rem 0; /* Uniform spacing for each "form" containing a button */
       text-align: center;
     }
 
@@ -31,10 +35,10 @@
     .button-form button {
       display: block;
       width: 100%;
-      max-width: 200px;
+      max-width: 100%; /* Changed from 200px to 100% */
       margin: 0 auto; /* center the button horizontally */
-      padding: 15px 25px;
-      font-size: 16px;
+      padding: 0.75rem 1.25rem; /* Changed from 15px 25px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
       font-weight: 700;
       background: #A0522D; /* Rust color default */
       color: #fff;
@@ -42,6 +46,7 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
+      box-sizing: border-box;
     }
 
     .button-form button:hover {
@@ -49,39 +54,73 @@
     }
 
     select {
-      margin: 10px;
-      padding: 10px 15px;
-      font-size: 16px;
+      margin: 0.625rem; /* Changed from 10px to rem */
+      padding: 0.625rem 0.938rem; /* Changed from 10px 15px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
+      border-radius: 5px;
+      width: 100%;
+      max-width: 100%; /* Changed from default */
+      box-sizing: border-box;
     }
 
     #chart-container {
       width: 100%;
-      max-width: 600px;
-      margin: 20px auto;
+      max-width: 100%; /* Changed from 600px to 100% */
+      margin: 1.25rem auto; /* Changed from 20px to rem */
+      box-sizing: border-box;
     }
 
     /* New container for the dropdown and view button inline */
     .exercise-container {
-      display: inline-flex;
+      display: flex; /* Changed from inline-flex to flex */
+      flex-direction: column; /* Changed to column for better stacking on mobile */
       align-items: center;
-      gap: 5px;
-      margin-top: 10px; /* Slight spacing from the title/paragraph */
+      gap: 0.3125rem; /* Changed from 5px to rem */
+      margin-top: 0.625rem; /* Changed from 10px to rem */
     }
 
     /* Olive button styling for the "View" button */
     .olive-button {
       background-color: #556B2F;
       color: white;
-      padding: 12px 15px; /* Smaller padding for a smaller button */
-      font-size: 17px;   /* Slightly smaller font */
+      padding: 0.75rem 0.938rem; /* Changed from 12px 15px to rem units */
+      font-size: 1.0625rem;   /* Changed from 17px to 1.0625rem */
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
+      box-sizing: border-box;
+      width: 100%; /* Ensure the button takes full width within the container */
+      max-width: 150px; /* Optional: limit max-width for larger screens */
     }
 
     .olive-button:hover {
       background-color: #3B4F1A; /* Darker olive on hover */
+    }
+
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
+      body {
+        padding: 2rem;
+      }
+      .exercise-container {
+        flex-direction: row; /* Change to row on larger screens */
+      }
+      .olive-button {
+        max-width: 150px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      .exercise-container {
+        flex-direction: column; /* Ensure column on small screens */
+      }
+      .olive-button {
+        max-width: 100%; /* Allow full width on small screens */
+      }
     }
   </style>
 </head>

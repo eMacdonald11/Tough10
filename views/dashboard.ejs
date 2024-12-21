@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <!-- Import Google Font for a clean look -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,32 +16,52 @@
       font-family: 'Open Sans', sans-serif;
       text-align: center;
       margin: 0;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
       background: #F9F8F3; /* Off-white background */
       color: #333;
-      max-width: 600px; /* Keep width narrow for single column */
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
+      box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F; /* Olive green heading */
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from default */
     }
 
     a {
       display: inline-block;
-      margin: 10px 5px;
-      padding: 10px 20px;
+      margin: 0.625rem 0.3125rem; /* Changed from 10px 5px to rem units */
+      padding: 0.625rem 1.25rem; /* Changed from 10px 20px to rem units */
       background: #A0522D; /* Rust color for links styled as buttons */
       color: #fff;
       text-decoration: none;
       border-radius: 5px;
       transition: background 0.3s ease;
+      font-size: 1rem; /* Added font size */
+      box-sizing: border-box;
     }
 
     a:hover {
       background: #8C4528; /* Darker rust on hover */
+    }
+
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
+      body {
+        padding: 2rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      a {
+        max-width: 100%;
+      }
     }
   </style>
 </head>

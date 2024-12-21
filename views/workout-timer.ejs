@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <title>Workout Timer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -9,91 +10,100 @@
   <style>
     /* 
       Mobile-first single-column, cohesive design for timers and input form. 
-      Timers, forms, and containers share max-width:300px for consistency.
+      Timers, forms, and containers adjust to screen size.
     */
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 600px;
+      max-width: 100%; /* Changed from 600px to 100% */
       margin: 0 auto;
-      padding: 20px;
+      padding: 2rem; /* Changed from 20px to rem units */
+      box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 20px;
-      font-size: 24px;
+      margin-bottom: 1.25rem; /* Changed from 20px to rem */
+      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
     }
+
     .timer-container {
-      display: inline-block;
-      margin: 0 auto 15px auto;
+      display: block; /* Changed from inline-block to block for better stacking */
+      margin: 0 auto 1rem auto; /* Changed from 15px to rem units */
       background: #FFF;
-      padding: 10px;
+      padding: 1rem; /* Changed from 10px to 1rem */
       border-radius: 5px;
       border: 1px solid #EEE;
-      min-width: 200px;
+      width: 100%; /* Changed from min-width and max-width to width: 100% */
       max-width: 300px; 
       font-weight: bold;
       transition: opacity 0.3s ease;
       text-align: center;
+      box-sizing: border-box;
     }
 
     #exercise-name {
       display: none;
-      margin: 0 auto 15px auto;
+      margin: 0 auto 1rem auto; /* Changed from 15px to rem units */
+      width: 100%;
       max-width: 300px;
       font-weight: bold;
-      font-size: 18px;
+      font-size: 1.125rem; /* Changed from 18px to 1.125rem */
+      box-sizing: border-box;
     }
 
-    /* Set Data form: same max-width, box styling */
+    /* Set Data form: same width, box styling */
     #input-form {
       display: none;
-      margin: 20px auto 0 auto;
+      margin: 1.25rem auto 0 auto; /* Changed from 20px to rem units */
+      width: 100%;
       max-width: 300px;
       background: #FFF;
-      padding: 15px;
+      padding: 1rem; /* Changed from 15px to 1rem */
       border-radius: 5px;
       border: 1px solid #EEE;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       text-align: left;
+      box-sizing: border-box;
     }
     #input-form h3 {
       margin-top: 0;
-      margin-bottom: 15px;
-      font-size: 18px;
+      margin-bottom: 0.9375rem; /* Changed from 15px to rem */
+      font-size: 1.125rem; /* Changed from 18px to 1.125rem */
       color: #556B2F;
       text-align: center; 
     }
     .input-row {
-      margin-bottom: 10px;
+      margin-bottom: 1rem; /* Changed from 10px to 1rem */
     }
     .input-row label {
-      display: inline-block;
-      width: 70px;
+      display: block; /* Changed from inline-block to block for better alignment */
+      width: 100%; /* Changed from fixed width to 100% */
       font-weight: 600;
-      font-size: 16px;
+      font-size: 1rem; /* Changed from 16px to 1rem */
       color: #333;
+      margin-bottom: 0.5rem; /* Added margin-bottom for spacing */
     }
     .input-row input[type="number"] {
-      width: 80px;
-      font-size: 16px;
-      padding: 5px;
-      margin-right: 5px;
+      width: 100%; /* Changed from 80px to 100% */
+      font-size: 1rem; /* Changed from 16px to 1rem */
+      padding: 0.5rem; /* Changed from 5px to 0.5rem */
+      margin-bottom: 0.5rem; /* Changed from margin-right to margin-bottom for better stacking */
       border: 1px solid #CCC;
       border-radius: 3px;
+      box-sizing: border-box;
     }
 
     #input-form button {
       display: block;
       width: 100%;
-      max-width: 300px;
-      margin: 15px auto 0 auto;
-      padding: 15px 25px;
-      font-size: 16px;
+      max-width: 100%; /* Changed from 300px to 100% */
+      margin: 0.9375rem auto 0 auto; /* Changed from 15px to rem units */
+      padding: 0.75rem 1.25rem; /* Changed from 15px 25px to rem units */
+      font-size: 1rem; /* Changed from 16px to 1rem */
       font-weight: 700;
       background: #A0522D;
       color: #fff;
@@ -102,29 +112,28 @@
       cursor: pointer;
       transition: background 0.3s ease;
       text-align: center;
+      box-sizing: border-box;
     }
     #input-form button:hover {
       background: #8C4528;
     }
 
     .feedback {
-      margin-top: 10px;
-      font-size: 14px;
+      margin-top: 0.625rem; /* Changed from 10px to rem units */
+      font-size: 0.875rem; /* Changed from 14px to 0.875rem */
       color: green;
     }
 
     p, li {
-      font-size: 16px;
+      font-size: 1rem; /* Changed from 16px to 1rem */
       line-height: 1.5;
       color: #333;
     }
 
-    @media (max-width: 600px) {
+    @media (min-width: 601px) {
+      /* Adjust styles for larger screens if needed */
       body {
-        padding: 10px;
-      }
-      .timer-container, #input-form {
-        max-width: 100%;
+        padding: 2rem;
       }
     }
   </style>
@@ -161,11 +170,11 @@
   <div id="input-form">
     <h3>Enter Your Set Data</h3>
     <div class="input-row">
-      <label>Weight</label>
+      <label for="weight-input">Weight</label>
       <input type="number" id="weight-input" placeholder="lbs">
     </div>
     <div class="input-row">
-      <label>Reps</label>
+      <label for="reps-input">Reps</label>
       <input type="number" id="reps-input" placeholder="reps">
     </div>
     <button onclick="submitSetData()">Submit</button>
@@ -274,7 +283,7 @@
 
       exerciseNameEl.style.display = 'block';
       exerciseNameEl.innerText = `${exercise.exercise_name} - Set ${currentSet} of ${sets}`;
-      document.getElementById('timer').style.display = 'inline-block';
+      document.getElementById('timer').style.display = 'block'; /* Changed from 'inline-block' to 'block' */
 
       timeRemaining = exerciseDuration;
       timeRemainingEl.innerText = timeRemaining;
@@ -375,7 +384,7 @@
     }
 
     function startRestTimer(duration) {
-      restTimerEl.style.display = 'inline-block';
+      restTimerEl.style.display = 'block'; /* Changed from 'inline-block' to 'block' */
       restTimeRemaining = duration;
       restRemainingEl.innerText = restTimeRemaining;
 
@@ -398,7 +407,7 @@
 
     function startNextExercisePreview(prepDuration) {
       // 60s rest after finishing entire exercise to preview the next
-      prepTimerEl.style.display = 'inline-block';
+      prepTimerEl.style.display = 'block'; /* Changed from 'inline-block' to 'block' */
       restTimerEl.style.display = 'none';
       exerciseNameEl.style.display = 'none';
       inputFormEl.style.display = 'none';
