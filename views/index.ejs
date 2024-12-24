@@ -17,7 +17,8 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      width: 100%;
+      max-width: 300px; /* Changed from 600px to 100% */
       margin: 0 auto;
       padding: 2rem; /* Changed from 20px to rem units */
       box-sizing: border-box;
@@ -27,7 +28,7 @@
     h1 {
       color: #556B2F;
       margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
+      font-size: 2.5rem; /* Changed from 24px to 1.5rem */
     }
 
     a {
@@ -54,7 +55,7 @@
       }
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 300px) {
       body {
         padding: 1rem;
       }
@@ -68,9 +69,10 @@
   <!-- Index (Landing) page:
        A simple welcome screen encouraging the user to login or register.
   -->
-  <h1>Welcome to Workout Generator</h1>
+  <h1>Tough10</h1>
 
   <!-- Links to login or register -->
-  <a href="/login">Login</a> or <a href="/register">Register</a>
+  <a href="/login" style="display: block; margin: 0.625rem auto;">Login</a>
+  <a href="/register" style="display: block; margin: 0.625rem auto;">Register</a>
 </body>
 </html>

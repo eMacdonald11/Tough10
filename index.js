@@ -9,7 +9,7 @@ const supabase = require('./supabase'); // Supabase client for interacting with 
 const app = express(); // Initialize the Express app
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on http://localhost:3000/`);
 });
 
 /* ==========================

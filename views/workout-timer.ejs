@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Workout Timer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -17,27 +17,27 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 100%; /* Allows the container to adapt to screen width */
       margin: 0 auto;
-      padding: 2rem; /* Changed from 20px to rem units */
+      padding: 2rem; /* Scalable padding */
       box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
+      margin-bottom: 1.25rem; /* Scalable margin */
+      font-size: 1.5rem; /* Scalable font size */
     }
 
     .timer-container {
-      display: block; /* Changed from inline-block to block for better stacking */
-      margin: 0 auto 1rem auto; /* Changed from 15px to rem units */
+      display: block; /* Ensures proper stacking on smaller screens */
+      margin: 0 auto 1rem auto; /* Scalable margin */
       background: #FFF;
-      padding: 1rem; /* Changed from 10px to 1rem */
+      padding: 1rem; /* Scalable padding */
       border-radius: 5px;
       border: 1px solid #EEE;
-      width: 100%; /* Changed from min-width and max-width to width: 100% */
+      width: 100%;
       max-width: 300px; 
       font-weight: bold;
       transition: opacity 0.3s ease;
@@ -47,22 +47,22 @@
 
     #exercise-name {
       display: none;
-      margin: 0 auto 1rem auto; /* Changed from 15px to rem units */
+      margin: 0 auto 1rem auto; /* Scalable margin */
       width: 100%;
       max-width: 300px;
       font-weight: bold;
-      font-size: 1.125rem; /* Changed from 18px to 1.125rem */
+      font-size: 1.125rem; /* Scalable font size */
       box-sizing: border-box;
     }
 
-    /* Set Data form: same width, box styling */
+    /* Set Data form: consistent styling */
     #input-form {
       display: none;
-      margin: 1.25rem auto 0 auto; /* Changed from 20px to rem units */
+      margin: 1.25rem auto 0 auto; /* Scalable margin */
       width: 100%;
       max-width: 300px;
       background: #FFF;
-      padding: 1rem; /* Changed from 15px to 1rem */
+      padding: 1rem; /* Scalable padding */
       border-radius: 5px;
       border: 1px solid #EEE;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -71,27 +71,27 @@
     }
     #input-form h3 {
       margin-top: 0;
-      margin-bottom: 0.9375rem; /* Changed from 15px to rem */
-      font-size: 1.125rem; /* Changed from 18px to 1.125rem */
+      margin-bottom: 0.9375rem; /* Scalable margin */
+      font-size: 1.125rem; /* Scalable font size */
       color: #556B2F;
       text-align: center; 
     }
     .input-row {
-      margin-bottom: 1rem; /* Changed from 10px to 1rem */
+      margin-bottom: 1rem; /* Scalable margin */
     }
     .input-row label {
-      display: block; /* Changed from inline-block to block for better alignment */
-      width: 100%; /* Changed from fixed width to 100% */
+      display: block; /* Ensures labels stack properly */
+      width: 100%;
       font-weight: 600;
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      font-size: 1rem; /* Scalable font size */
       color: #333;
-      margin-bottom: 0.5rem; /* Added margin-bottom for spacing */
+      margin-bottom: 0.5rem; /* Scalable margin */
     }
     .input-row input[type="number"] {
-      width: 100%; /* Changed from 80px to 100% */
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      padding: 0.5rem; /* Changed from 5px to 0.5rem */
-      margin-bottom: 0.5rem; /* Changed from margin-right to margin-bottom for better stacking */
+      width: 100%; /* Full width for better usability */
+      font-size: 1rem; /* Scalable font size */
+      padding: 0.5rem; /* Scalable padding */
+      margin-bottom: 0.5rem; /* Scalable margin */
       border: 1px solid #CCC;
       border-radius: 3px;
       box-sizing: border-box;
@@ -100,10 +100,10 @@
     #input-form button {
       display: block;
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
-      margin: 0.9375rem auto 0 auto; /* Changed from 15px to rem units */
-      padding: 0.75rem 1.25rem; /* Changed from 15px 25px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      max-width: 100%; /* Ensures button adapts to container width */
+      margin: 0.9375rem auto 0 auto; /* Scalable margin */
+      padding: 0.75rem 1.25rem; /* Scalable padding */
+      font-size: 1rem; /* Scalable font size */
       font-weight: 700;
       background: #A0522D;
       color: #fff;
@@ -119,13 +119,13 @@
     }
 
     .feedback {
-      margin-top: 0.625rem; /* Changed from 10px to rem units */
-      font-size: 0.875rem; /* Changed from 14px to 0.875rem */
+      margin-top: 0.625rem; /* Scalable margin */
+      font-size: 0.875rem; /* Scalable font size */
       color: green;
     }
 
     p, li {
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      font-size: 1rem; /* Scalable font size */
       line-height: 1.5;
       color: #333;
     }
@@ -182,9 +182,9 @@
   </div>
 
   <!-- AUDIO -->
-  <audio id="countdown" src="/audio/countdown.mp3"></audio>
-  <audio id="bell" src="/audio/bell.mp3"></audio>
-  <audio id="halfway-sound" src="/audio/halfway.mp3"></audio>
+  <audio id="countdown" src="/audio/countdown.mp3" preload="auto"></audio>
+  <audio id="bell" src="/audio/bell.mp3" preload="auto"></audio>
+  <audio id="halfway-sound" src="/audio/halfway.mp3" preload="auto"></audio>
 
   <script>
     /*
@@ -237,9 +237,6 @@
       window.location.href = '/generate-workout';
     }
 
-    // Probably just reading the first exercise for the initial preview. 
-    // If your logic sets workout[0], that’s the type1 exercise, etc.
-
     function startPrepTimer() {
       // Show the first exercise details
       const currentExercise = workout[currentExerciseIndex];
@@ -283,7 +280,7 @@
 
       exerciseNameEl.style.display = 'block';
       exerciseNameEl.innerText = `${exercise.exercise_name} - Set ${currentSet} of ${sets}`;
-      document.getElementById('timer').style.display = 'block'; /* Changed from 'inline-block' to 'block' */
+      document.getElementById('timer').style.display = 'block';
 
       timeRemaining = exerciseDuration;
       timeRemainingEl.innerText = timeRemaining;
@@ -377,14 +374,14 @@
           alert('Workout Complete!');
           window.location.href = '/workout-complete';
         } else {
-          // Provide 60 seconds rest to preview next exercise
+          // Provide rest to preview next exercise
           startNextExercisePreview(EXERCISE_INFO[currentExerciseIndex].postExerciseRest || 60);
         }
       }
     }
 
     function startRestTimer(duration) {
-      restTimerEl.style.display = 'block'; /* Changed from 'inline-block' to 'block' */
+      restTimerEl.style.display = 'block';
       restTimeRemaining = duration;
       restRemainingEl.innerText = restTimeRemaining;
 
@@ -406,8 +403,8 @@
     }
 
     function startNextExercisePreview(prepDuration) {
-      // 60s rest after finishing entire exercise to preview the next
-      prepTimerEl.style.display = 'block'; /* Changed from 'inline-block' to 'block' */
+      // Rest period before the next exercise
+      prepTimerEl.style.display = 'block';
       restTimerEl.style.display = 'none';
       exerciseNameEl.style.display = 'none';
       inputFormEl.style.display = 'none';
