@@ -240,25 +240,6 @@
       No indefinite loops. We track sets for each exercise, do the correct rest, and move on.
     */
 
-    // Initialize Web Audio API context
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioContext = new AudioContext();
-
-    // Function to play an audio element via Web Audio API
-    function playAudio(audio) {
-      return new Promise((resolve, reject) => {
-        // Create a MediaElementSource for the audio element
-        const source = audioContext.createMediaElementSource(audio);
-        source.connect(audioContext.destination);
-        // Play the audio
-        audio.play().then(() => {
-          resolve();
-        }).catch((error) => {
-          reject(error);
-        });
-      });
-    }
-
     const workout = JSON.parse('<%- JSON.stringify(workout) %>');
 
     const EXERCISE_INFO = [
@@ -306,35 +287,11 @@
     function readyButtonClicked() {
       console.log('"I\'m Ready!" button clicked.');
 
-      // Resume the audio context (required for some browsers)
-      if (audioContext.state === 'suspended') {
-        audioContext.resume();
-      }
-
       // Play silent audio to unlock audio context
-      playAudio(silentAudio).then(() => {
+      silentAudio.play().then(() => {
         console.log('Silent audio played successfully. Audio context unlocked.');
-
-        // Array of other audio elements to prime
-        const audioElements = [countdownAudio, bell, halfwaySound];
-
-        // Function to play and immediately pause an audio element
-        const primeAudio = (audio) => {
-          playAudio(audio).then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-            console.log(`${audio.id} primed.`);
-          }).catch((error) => {
-            console.error(`Error priming ${audio.id}:`, error);
-          });
-        };
-
-        // Prime all audio elements
-        audioElements.forEach(primeAudio);
-
         // Start the 15-second prep timer
         startPrepTimer();
-
         // Hide the "I'm Ready!" button after clicking
         document.getElementById('ready-button').style.display = 'none';
       }).catch((error) => {
@@ -360,11 +317,8 @@
         prepTimeRemaining--;
         prepRemainingEl.innerText = prepTimeRemaining;
         if (prepTimeRemaining === 5) {
-          playAudio(countdownAudio).then(() => {
-            console.log('Countdown audio played during prep timer.');
-          }).catch((error) => {
-            console.error('Error playing countdown audio during prep timer:', error);
-          });
+          countdownAudio.currentTime = 0;
+          countdownAudio.play();
         }
         if (prepTimeRemaining <= 0) {
           clearInterval(prepInterval);
@@ -405,29 +359,19 @@
         timeRemainingEl.innerText = timeRemaining;
 
         if (!halfwayPlayed && timeRemaining === halfwayMarker) {
-          playAudio(halfwaySound).then(() => {
-            console.log('Halfway sound played.');
-            halfwayPlayed = true;
-          }).catch((error) => {
-            console.error('Error playing halfway sound:', error);
-          });
+          halfwaySound.currentTime = 0;
+          halfwaySound.play();
+          halfwayPlayed = true;
         }
         if (timeRemaining === 5) {
-          playAudio(countdownAudio).then(() => {
-            console.log('Countdown audio played.');
-          }).catch((error) => {
-            console.error('Error playing countdown audio:', error);
-          });
+          countdownAudio.currentTime = 0;
+          countdownAudio.play();
         }
         if (timeRemaining <= 0) {
           clearInterval(timerInterval);
-          playAudio(bell).then(() => {
-            console.log('Bell sound played.');
-            showInputForm();
-          }).catch((error) => {
-            console.error('Error playing bell sound:', error);
-            showInputForm();
-          });
+          bell.currentTime = 0;
+          bell.play();
+          showInputForm();
         }
       }, 1000);
     }
@@ -512,11 +456,8 @@
         restRemainingEl.innerText = restTimeRemaining;
 
         if (restTimeRemaining === 5) {
-          playAudio(countdownAudio).then(() => {
-            console.log('Countdown audio played during rest timer.');
-          }).catch((error) => {
-            console.error('Error playing countdown audio during rest timer:', error);
-          });
+          countdownAudio.currentTime = 0;
+          countdownAudio.play();
         }
         if (restTimeRemaining <= 0) {
           clearInterval(restInterval);
@@ -551,11 +492,8 @@
         nextPrepTimeRemaining--;
         prepRemainingEl.innerText = nextPrepTimeRemaining;
         if (nextPrepTimeRemaining === 5) {
-          playAudio(countdownAudio).then(() => {
-            console.log('Countdown audio played during next exercise prep timer.');
-          }).catch((error) => {
-            console.error('Error playing countdown audio during next exercise prep timer:', error);
-          });
+          countdownAudio.currentTime = 0;
+          countdownAudio.play();
         }
         if (nextPrepTimeRemaining <= 0) {
           clearInterval(prepInterval);
