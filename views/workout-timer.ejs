@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Workout Timer</title>
+  <title>PACE KEEPER</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,6 +22,8 @@
       padding: 2rem; /* Scalable padding */
       box-sizing: border-box;
       overflow-x: hidden;
+      position: relative; /* For positioning the "I'm Ready!" button */
+      min-height: 100vh; /* Ensure body takes full viewport height */
     }
 
     h1 {
@@ -33,7 +35,7 @@
     .timer-container {
       display: block; /* Ensures proper stacking on smaller screens */
       margin: 0 auto 1rem auto; /* Scalable margin */
-      background: #FFF;
+      background: #ffc87f; /* main background for the box containing "your next exercise" and exercise timers */
       padding: 1rem; /* Scalable padding */
       border-radius: 5px;
       border: 1px solid #EEE;
@@ -43,6 +45,12 @@
       transition: opacity 0.3s ease;
       text-align: center;
       box-sizing: border-box;
+    }
+
+    /* Adjusted <h3> margins within #prep-timer */
+    #prep-timer h3 {
+      margin-top: 0.25rem; /* Reduced top margin */
+      margin-bottom: 0.5rem; /* Optional: Adjust as needed */
     }
 
     #exercise-name {
@@ -130,22 +138,54 @@
       color: #333;
     }
 
+    /* "I'm Ready!" Button Styling */
+    #ready-button {
+      position: absolute;
+      bottom: 6rem; /* Distance from the bottom */
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      background: #556B2F;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    #ready-button:hover {
+      background: #3F4E24;
+    }
+
+    /* Responsive Adjustments */
     @media (min-width: 601px) {
       /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
     }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 1rem;
+      }
+      select, .button-form button {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Workout Timer</h1>
+  <h1> TOUGH10 </h1>
 
   <!-- PREP TIMER (initial preview before the first exercise) -->
   <div id="prep-timer" class="timer-container">
-    <h2>Your next exercise:</h2>
+    <h3>Your next exercise:</h3>
     <div id="exercise-details">
-      <h3><%= workout[0]?.exercise_name || 'Exercise Name Not Available' %></h3>
+      <h2><%= workout[0]?.exercise_name || 'Exercise Name Not Available' %></h2>
       <p>
         <%= workout[0]?.lastPerformance
           ? `Avg Weight: ${workout[0].lastPerformance.averageWeight} lbs, Avg Reps: ${workout[0].lastPerformance.averageReps}`
@@ -185,6 +225,11 @@
   <audio id="countdown" src="/audio/countdown.mp3" preload="auto"></audio>
   <audio id="bell" src="/audio/bell.mp3" preload="auto"></audio>
   <audio id="halfway-sound" src="/audio/halfway.mp3" preload="auto"></audio>
+  <!-- Silent Audio for Unlocking Audio Context -->
+  <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
+
+  <!-- "I'm Ready!" Button -->
+  <button id="ready-button" onclick="readyButtonClicked()">I'm Ready!</button>
 
   <script>
     /*
@@ -231,10 +276,28 @@
     const countdownAudio = document.getElementById('countdown');
     const bell = document.getElementById('bell');
     const halfwaySound = document.getElementById('halfway-sound');
+    const silentAudio = document.getElementById('silent-audio');
 
     // If no workout data, redirect
     if (!workout || workout.length === 0) {
       window.location.href = '/generate-workout';
+    }
+
+    // Function to handle "I'm Ready!" button click
+    function readyButtonClicked() {
+      console.log('"I\'m Ready!" button clicked.');
+
+      // Play silent audio to unlock audio context
+      silentAudio.play().then(() => {
+        console.log('Silent audio played successfully. Audio context unlocked.');
+        // Start the 15-second prep timer
+        startPrepTimer();
+        // Hide the "I'm Ready!" button after clicking
+        document.getElementById('ready-button').style.display = 'none';
+      }).catch((error) => {
+        console.error('Silent audio playback failed:', error);
+        alert('Unable to start workout due to audio restrictions. Please try again.');
+      });
     }
 
     function startPrepTimer() {
@@ -244,8 +307,11 @@
         window.location.href = '/generate-workout';
         return;
       }
-      prepTimerEl.querySelector('h3').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
+      // Update the <h2> element with the exercise name
+      prepTimerEl.querySelector('h2').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
       prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(currentExercise);
+
+      prepTimerEl.style.display = 'block'; // Ensure the prep timer is visible
 
       prepInterval = setInterval(() => {
         prepTimeRemaining--;
@@ -371,7 +437,6 @@
         currentExerciseIndex++;
         if (currentExerciseIndex >= EXERCISE_INFO.length) {
           // We have done all exercises
-          alert('Workout Complete!');
           window.location.href = '/workout-complete';
         } else {
           // Provide rest to preview next exercise
@@ -412,12 +477,11 @@
       const nextExercise = workout[currentExerciseIndex];
       if (!nextExercise) {
         // No next exercise => workout complete
-        alert('Workout Complete!');
-        window.location.href = '/workout-complete';
+        window.location.href = '/workout-complete'; // Redirects user to the workout completion page
         return;
       }
 
-      prepTimerEl.querySelector('h3').innerText = nextExercise.exercise_name || 'Exercise Name Not Available';
+      prepTimerEl.querySelector('h2').innerText = nextExercise.exercise_name || 'Exercise Name Not Available';
       prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(nextExercise);
 
       let nextPrepTimeRemaining = prepDuration;
@@ -439,8 +503,8 @@
       }, 1000);
     }
 
-    // Initial prep for the first exercise
-    startPrepTimer();
+    // Initial prep for the first exercise is now triggered by "I'm Ready!" button
+    // Removed automatic call to startPrepTimer()
   </script>
 </body>
 </html>
