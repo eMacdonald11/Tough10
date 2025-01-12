@@ -389,10 +389,10 @@
       const weight = Number(weightInputEl.value);
       const reps = Number(repsInputEl.value);
 
-      if (!weight || !reps) {
-        alert('Please enter valid weight and reps');
-        return;
-      }
+      if (weight === '' || isNaN(weight) || reps === '' || isNaN(reps)) {
+  alert('Please enter valid weight and reps');
+  return;
+  }
       // Save data
       const exercise = workout[currentExerciseIndex];
       fetch('/save-workout', {
