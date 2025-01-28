@@ -9,7 +9,7 @@ const supabase = require('./supabase'); // Supabase client for interacting with 
 const app = express(); // Initialize the Express app
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:3000/`);
+  console.log(`Server running on http://localhost:${PORT}/`);
 });
 
 /* ==========================
@@ -42,17 +42,29 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-// Function to generate a random workout for a given muscle group
-async function generateWorkout(userId, muscleGroup) {
-  // Fetch exercises matching the muscle group
-  const { data: groupExercises, error } = await supabase
+// Function to generate a random workout for a given muscle group and equipment preference
+async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
+  // Build the query
+  let query = supabase
     .from('exercises')
     .select('*')
     .eq('muscle_group', muscleGroup);
 
-  if (error || !groupExercises) {
+  // If dumbbellOnly is true, add an additional filter
+  if (dumbbellOnly) {
+    query = query.eq('dumbbell_only', true);
+  }
+
+  // Fetch exercises from Supabase
+  const { data: groupExercises, error } = await query;
+
+  if (error) {
     console.error("Error fetching exercises:", error);
     return []; // Return empty array if error
+  }
+
+  if (!groupExercises || groupExercises.length === 0) {
+    return []; // No exercises found based on filters
   }
 
   // Filter exercises into three categories (type1, type2, type3)
@@ -107,12 +119,14 @@ async function generateWorkout(userId, muscleGroup) {
     return { ...exercise, lastPerformance };
   };
 
-  // Return an array of one exercise per type (type1, type2, type3)
-  return [
-    await getRandomExercise(type1Exercises),
-    await getRandomExercise(type2Exercises),
-    await getRandomExercise(type3Exercises),
-  ];
+  // Fetch one random exercise from each type
+  const workout = await Promise.all([
+    getRandomExercise(type1Exercises),
+    getRandomExercise(type2Exercises),
+    getRandomExercise(type3Exercises),
+  ]);
+
+  return workout;
 }
 
 /* ==========================
@@ -140,10 +154,12 @@ app.post('/register', async (req, res) => {
 
   try {
     // Check if user already exists
-    const { data: existingUser } = await supabase
+    const { data: existingUser, error: fetchError } = await supabase
       .from('users')
       .select('*')
       .eq('email', email);
+
+    if (fetchError) throw fetchError;
 
     if (existingUser && existingUser.length > 0) {
       return res.status(400).render('register', { error: 'User already exists. Please log in.', success: null });
@@ -153,12 +169,12 @@ app.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the new user
-    const { data: newUser, error } = await supabase
+    const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([{ email, password: hashedPassword }])
       .select();
 
-    if (error) throw error;
+    if (insertError) throw insertError;
 
     const user = newUser[0];
     // Automatically log the user in
@@ -190,10 +206,12 @@ app.post('/login', async (req, res) => {
 
   try {
     // Find user by email
-    const { data: users } = await supabase
+    const { data: users, error: fetchError } = await supabase
       .from('users')
       .select('*')
       .eq('email', email);
+
+    if (fetchError) throw fetchError;
 
     if (!users || users.length === 0) {
       return res.status(404).render('login', { error: 'User not found' });
@@ -227,25 +245,45 @@ app.get('/generate-workout', isAuthenticated, (req, res) => {
   res.render('generate-workout', { 
     user: req.session.user, 
     muscleGroup: null, 
-    workout: [] 
+    workout: [], 
+    dumbbellOnly: false, // Default toggle state
+    error: null 
   });
 });
 
-// Handle Workout Generation (POST): Create a new workout based on chosen muscle group
+// Handle Workout Generation (POST): Create a new workout based on chosen muscle group and equipment preference
 app.post('/generate-workout', isAuthenticated, async (req, res) => {
-  const { muscleGroup } = req.body;
+  const { muscleGroup, dumbbell_only } = req.body;
   const userId = req.session.user.id;
 
+  // Convert 'dumbbell_only' to boolean
+  const dumbbellOnly = dumbbell_only === '1' ? true : false;
+
   try {
-    const workout = await generateWorkout(userId, muscleGroup);
+    const workout = await generateWorkout(userId, muscleGroup, dumbbellOnly);
+    
+    if (dumbbellOnly && workout.length === 0) {
+      // If dumbbell_only is selected but no exercises found
+      return res.render('generate-workout', { 
+        user: req.session.user, 
+        muscleGroup, 
+        workout: [], 
+        dumbbellOnly,
+        error: 'No dumbbell-only exercises found for the selected muscle group. Please choose a different muscle group or disable "Dumbbell Only".'
+      });
+    }
+
     // Store workout and muscleGroup in session for later use (e.g., starting workout)
     req.session.workout = workout;
     req.session.muscleGroup = muscleGroup;
+    req.session.dumbbellOnly = dumbbellOnly; // Store preference
     req.session.save(() => {
       res.render('generate-workout', { 
         user: req.session.user, 
         muscleGroup, 
-        workout 
+        workout,
+        dumbbellOnly,
+        error: null
       });
     });
   } catch (err) {
@@ -253,7 +291,9 @@ app.post('/generate-workout', isAuthenticated, async (req, res) => {
     res.render('generate-workout', { 
       user: req.session.user, 
       muscleGroup, 
-      workout: [] 
+      workout: [], 
+      dumbbellOnly,
+      error: 'An error occurred while generating your workout. Please try again.'
     });
   }
 });
@@ -262,13 +302,26 @@ app.post('/generate-workout', isAuthenticated, async (req, res) => {
 app.post('/regenerate-workout', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id;
   const muscleGroup = req.session.muscleGroup;
+  const dumbbellOnly = req.session.dumbbellOnly; // Retrieve from session
 
   if (!muscleGroup) {
     return res.redirect('/generate-workout');
   }
 
   try {
-    const workout = await generateWorkout(userId, muscleGroup);
+    const workout = await generateWorkout(userId, muscleGroup, dumbbellOnly);
+    
+    if (dumbbellOnly && workout.length === 0) {
+      // If dumbbell_only is selected but no exercises found
+      return res.render('generate-workout', { 
+        user: req.session.user, 
+        muscleGroup, 
+        workout: [], 
+        dumbbellOnly,
+        error: 'No dumbbell-only exercises found for the selected muscle group. Please choose a different muscle group or disable "Dumbbell Only".'
+      });
+    }
+
     req.session.workout = workout;
     req.session.save(() => {
       res.render('workout', { workout, muscleGroup });

@@ -17,13 +17,12 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Allows the container to adapt to screen width */
+      max-width: 100%;
       margin: 0 auto;
       padding: 2rem; /* Scalable padding */
       box-sizing: border-box;
       overflow-x: hidden;
-      position: relative; /* For positioning the "I'm Ready!" button */
-      min-height: 100vh; /* Ensure body takes full viewport height */
+      /* Removed position:relative and min-height to allow normal flow for button */
     }
 
     h1 {
@@ -34,7 +33,8 @@
 
     .timer-container {
       display: block; /* Ensures proper stacking on smaller screens */
-      margin: 0 auto 1rem auto; /* Scalable margin */
+      /* Updated bottom margin to 1.25rem for symmetrical spacing */
+      margin: 0 auto 1.25rem auto; 
       background: #ffc87f; /* main background for the box containing "your next exercise" and exercise timers */
       padding: 1rem; /* Scalable padding */
       border-radius: 5px;
@@ -138,12 +138,11 @@
       color: #333;
     }
 
-    /* "I'm Ready!" Button Styling */
+    /* "I'm Ready!" Button in normal flow */
     #ready-button {
-      position: absolute;
-      bottom: 6rem; /* Distance from the bottom */
-      left: 50%;
-      transform: translateX(-50%);
+      display: block;
+      /* Matches the space from .timer-container to h1 (1.25rem), creating consistent spacing */
+      margin: 1.25rem auto 0 auto;
       padding: 0.75rem 1.5rem;
       font-size: 1rem;
       font-weight: 700;
@@ -237,7 +236,6 @@
         Exercise 1 (type1): 3 sets, 50s each, 30s rest, then 60s rest to preview next exercise.
         Exercise 2 (type2): 4 sets, 30s each, 20s rest, then 60s rest to preview final exercise.
         Exercise 3 (type3): 1 set, 90s, end workout afterward.
-      No indefinite loops. We track sets for each exercise, do the correct rest, and move on.
     */
 
     const workout = JSON.parse('<%- JSON.stringify(workout) %>');
@@ -390,9 +388,9 @@
       const reps = Number(repsInputEl.value);
 
       if (weight === '' || isNaN(weight) || reps === '' || isNaN(reps)) {
-  alert('Please enter valid weight and reps');
-  return;
-  }
+        alert('Please enter valid weight and reps');
+        return;
+      }
       // Save data
       const exercise = workout[currentExerciseIndex];
       fetch('/save-workout', {
@@ -503,8 +501,7 @@
       }, 1000);
     }
 
-    // Initial prep for the first exercise is now triggered by "I'm Ready!" button
-    // Removed automatic call to startPrepTimer()
+    // Initial prep for the first exercise is triggered by "I'm Ready!" button
   </script>
 </body>
 </html>

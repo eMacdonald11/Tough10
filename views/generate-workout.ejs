@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Generate Workout</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -17,41 +17,44 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 100%; /* Allows the container to adapt to screen width */
       margin: 0 auto;
-      padding: 2rem; /* Changed from 20px to rem units */
+      padding: 2rem; /* Scalable padding */
       box-sizing: border-box;
       overflow-x: hidden; 
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
+      margin-bottom: 1.25rem; /* Scalable margin */
+      font-size: 1.5rem; /* Scalable font size */
     }
 
     .button-form {
-      margin: 1rem 0; /* uniform vertical spacing for each form */
+      margin: 1rem 0; /* Uniform vertical spacing for each form */
       text-align: center;
     }
+
     .button-form button {
       display: block;
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
-      margin: 0 auto; /* center horizontally */
-      padding: 0.75rem 1.25rem; /* Changed from 15px 25px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      max-width: 100%; /* Ensures button adapts to container width */
+      margin: 0.5rem auto; /* Center horizontally with scalable margin */
+      padding: 0.75rem 1.25rem; /* Scalable padding */
+      font-size: 1rem; /* Scalable font size */
       font-weight: 700;
       background: #A0522D; /* Rust color by default */
       color: #fff;
-      border: 2px solid #8C4528; /* subtle trim color */
+      border: 2px solid #8C4528; /* Subtle trim color */
       border-radius: 5px;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
       box-sizing: border-box;
     }
+
     .button-form button:hover {
       background: #8C4528;
+      transform: translateY(-2px);
     }
 
     /* "Start Workout" button special style in olive green */
@@ -61,51 +64,145 @@
     }
     .start-workout-button:hover {
       background: #3F4E24 !important;
+      transform: translateY(-2px);
     }
 
     select {
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      padding: 0.625rem; /* Changed from 10px to rem units */
+      font-size: 1rem; /* Scalable font size */
+      padding: 0.625rem; /* Scalable padding */
       border-radius: 5px;
       margin: 1rem 0;
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
+      max-width: 100%; /* Ensures select adapts to container width */
       box-sizing: border-box;
+      border: 1px solid #CCC;
+      transition: border-color 0.3s ease;
+    }
+
+    select:focus {
+      border-color: #556B2F;
+      outline: none;
     }
 
     .workout-item {
-      margin-bottom: 1.25rem; /* Changed from 20px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      margin-bottom: 1.25rem; /* Scalable margin */
+      font-size: 1rem; /* Scalable font size */
       background: #FFF7F0;
-      padding: 0.625rem; /* Changed from 10px to rem units */
+      padding: 0.625rem; /* Scalable padding */
       border: 1px solid #EEE;
       border-radius: 5px;
       text-align: left;
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
+      max-width: 100%; /* Ensures item adapts to container width */
       box-sizing: border-box;
-      margin: 0.625rem auto; /* Changed from 10px auto to rem units */
+      margin: 0.625rem auto; /* Scalable margin */
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      transition: transform 0.2s ease;
+    }
+
+    .workout-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     ul {
       list-style-type: none;
       padding: 0;
-      margin: 1.25rem 0; /* Changed from 20px to rem units */
+      margin: 1.25rem 0; /* Scalable margin */
     }
+
     li {
-      margin: 0.625rem 0; /* Changed from 10px to rem units */
+      margin: 0.625rem 0; /* Scalable margin */
     }
 
     p {
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      margin: 0.625rem 0; /* Changed from 10px to rem units */
+      font-size: 1rem; /* Scalable font size */
+      margin: 0.625rem 0; /* Scalable margin */
     }
 
-    @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
-      body {
-        padding: 2rem;
-      }
+    /* Centering container for the toggle switch */
+    .toggle-container {
+      display: flex;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    /* The switch container */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 160px;
+      height: 40px;
+    }
+
+    /* Hide the default checkbox */
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    /* The slider background */
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; 
+      left: 0; 
+      right: 0; 
+      bottom: 0;
+      background-color: #556B2F;
+      transition: 0.4s;
+      border-radius: 40px;
+      /* Place the label text above the slider background */
+      z-index: 1;
+    }
+
+    /* The toggle knob */
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 32px;
+      width: 32px;
+      left: 4px;
+      bottom: 4px;
+      background-color: #fff;
+      transition: 0.4s;
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      z-index: 2; /* Knob above the slider background */
+    }
+
+    /* Centered text INSIDE the slider, toggling via content */
+    .slider:after {
+      content: "Full Gym";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #ffffff;
+      font-size: 0.9rem;
+      pointer-events: none;
+      z-index: 3; /* Text above everything else */
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* When checked, slide the knob and change the background */
+    input:checked + .slider {
+      background-color: #8C4528;
+    }
+    input:checked + .slider:before {
+      transform: translateX(120px); /* Slide knob to the right; 160 - 40 = 120 */
+    }
+
+    /* When checked, show "DB Only" as center text */
+    input:checked + .slider:after {
+      content: "DB Only";
+    }
+
+    /* For focus */
+    input:focus + .slider {
+      box-shadow: 0 0 1px #556B2F;
     }
 
     @media (max-width: 600px) {
@@ -115,20 +212,50 @@
       select, .button-form button {
         max-width: 100%;
       }
+      .switch {
+        width: 140px;
+        height: 35px;
+      }
+      .slider:before {
+        height: 27px;
+        width: 27px;
+      }
+      .slider:after {
+        font-size: 0.8rem;
+      }
+      input:checked + .slider:before {
+        transform: translateX(105px); /* Adjust for smaller width */
+      }
     }
   </style>
 </head>
 <body>
   <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
 
-  <!-- Muscle Group Selection Form -->
+  <!-- Muscle Group Selection and Dumbbell Only Toggle Form -->
   <form action="/generate-workout" method="POST" class="button-form">
+    <!-- Area of Focus Selection -->
     <p style="font-weight: 600;">Area of Focus:</p>
     <select name="muscleGroup" required>
-      <option value="legs">Legs</option>
-      <option value="shouldersAndBack">Shoulders and Back</option>
-      <option value="chestArmsAndAbs">Chest, Arms, and Abs</option>
+      <option value="legs" <%= muscleGroup === 'legs' ? 'selected' : '' %>>Legs</option>
+      <option value="shouldersAndBack" <%= muscleGroup === 'shouldersAndBack' ? 'selected' : '' %>>Shoulders and Back</option>
+      <option value="chestArmsAndAbs" <%= muscleGroup === 'chestArmsAndAbs' ? 'selected' : '' %>>Chest, Arms, and Abs</option>
     </select>
+
+    <!-- Dumbbell Only Toggle Slider -->
+    <div class="toggle-container">
+      <label class="switch">
+        <input 
+          type="checkbox" 
+          id="dumbbell-only" 
+          name="dumbbell_only" 
+          value="1" 
+          <%= dumbbellOnly ? 'checked' : '' %>
+        >
+        <span class="slider"></span>
+      </label>
+    </div>
+
     <button type="submit">Generate Workout</button>
   </form>
 
@@ -146,10 +273,10 @@
         </li>
       <% }); %>
     </ul>
-    <!-- “Start Workout” Button in olive green -->
-    <form action="/start-workout" method="POST" class="button-form">
+    <!-- “Start Workout” Button in olive green with audio unlock -->
+    <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
       <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
-      <button type="submit" class="start-workout-button">Start Workout</button>
+      <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
     </form>
   <% } %>
 
@@ -166,5 +293,27 @@
   <form action="/logout" method="POST" class="button-form">
     <button type="submit">Logout</button>
   </form>
+
+  <!-- Hidden Silent Audio for Unlocking Audio Context -->
+  <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
+  <!-- 
+    Note: Ensure you have a `silent.mp3` file in your `/public/audio/` directory.
+    This file should be a very short silent audio clip.
+  -->
+
+  <script>
+    // Function to handle Start Workout button click
+    function startWorkout() {
+      const silentAudio = document.getElementById('silent-audio');
+      silentAudio.play().then(() => {
+        // Audio context unlocked
+        // Submit the form to start the workout
+        document.getElementById('start-workout-form').submit();
+      }).catch((error) => {
+        console.error('Audio unlock failed:', error);
+        alert('Unable to start workout due to audio restrictions. Please try again.');
+      });
+    }
+  </script>
 </body>
 </html>
