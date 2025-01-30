@@ -10,13 +10,21 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #F9F8F3;
+      background: #ECE7D8;
       color: #333;
-      max-width: 600px; /* Force 600px max */
-      margin: 0 auto;
+      margin: 0;
       padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
+    }
+    .container {
+      background: #F9F8F3;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -30,7 +38,6 @@
       padding: 0;
       margin: 1.25rem 0;
     }
-
     li {
       margin: 0.625rem 0;
       font-size: 1rem;
@@ -52,31 +59,25 @@
       background: #8C4528;
     }
 
-    @media (min-width: 601px) {
-      body {
-        padding: 2rem;
-      }
-    }
     @media (max-width: 600px) {
       body {
         padding: 1rem;
-      }
-      button {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Tough10 Overview</h1>
-  <p>This application has been designed to build an excellent physique in as little time as possible.</p>
-  <ul>
-    <li>Inspired by natural bodybuilding techniques, it focuses on controlled movements with lighter weights to reduce joint strain. Embrace the 4-1-1 tempo. Short breaks and variety ensure no plateau.</li>
-    <li>Don’t underestimate the burn – a pair of 20lb dumbbells will leave you sweating!</li>
-  </ul>
+  <div class="container">
+    <h1>Tough10 Overview</h1>
+    <p>This application has been designed to build an excellent physique in as little time as possible.</p>
+    <ul>
+      <li>Inspired by natural bodybuilding techniques, it focuses on controlled movements with lighter weights to reduce joint strain and push muscles to their limit.</li>
+      <li>Don’t underestimate the burn – a pair of 20lb dumbbells will leave you sweating!</li>
+    </ul>
 
-  <form action="/generate-workout" method="GET">
-    <button type="submit">Back</button>
-  </form>
+    <form action="/generate-workout" method="GET">
+      <button type="submit">Back</button>
+    </form>
+  </div>
 </body>
 </html>

@@ -10,23 +10,27 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #F9F8F3;
+      background: #ECE7D8;
       color: #333;
-      max-width: 600px; /* Force 600px max */
-      margin: 0 auto;
+      margin: 0;
       padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
+    .container {
+      background: #F9F8F3;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
+    }
+
     h1 {
       color: #556B2F;
       margin-bottom: 1.25rem;
       font-size: 1.5rem;
-    }
-    p {
-      font-size: 1rem;
-      margin: 0.625rem 0;
-      color: #333;
     }
     .error {
       color: red;
@@ -41,8 +45,8 @@
       margin: 0.625rem auto 0.3125rem;
       font-weight: 600;
       text-align: left;
-      max-width: 100%;
       width: 100%;
+      max-width: 100%;
       padding: 0 1rem;
       box-sizing: border-box;
     }
@@ -59,7 +63,6 @@
     button {
       display: block;
       width: 100%;
-      max-width: 100%;
       margin: 0.625rem auto;
       padding: 0.9375rem 1.5625rem;
       font-size: 1rem;
@@ -84,39 +87,32 @@
     a:hover {
       text-decoration: underline;
     }
-
-    @media (min-width: 601px) {
-      body {
-        padding: 2rem;
-      }
-    }
     @media (max-width: 600px) {
       body {
         padding: 1rem;
-      }
-      label, input, button {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Login</h1>
+  <div class="container">
+    <h1>Login</h1>
 
-  <% if (error) { %>
-    <p class="error"><%= error %></p>
-  <% } %>
+    <% if (error) { %>
+      <p class="error"><%= error %></p>
+    <% } %>
 
-  <form action="/login" method="POST">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
+    <form action="/login" method="POST">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
 
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password" required>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
 
-    <button type="submit">Login</button>
-  </form>
+      <button type="submit">Login</button>
+    </form>
 
-  <p>Don't have an account? <a href="/register">Register here</a></p>
+    <p>Don't have an account? <a href="/register">Register here</a></p>
+  </div>
 </body>
 </html>

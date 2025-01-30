@@ -10,14 +10,21 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
+      background: #ECE7D8;
+      color: #333;
       margin: 0;
       padding: 2rem;
-      background: #F9F8F3;
-      color: #333;
-      max-width: 600px; /* Force 600px max */
-      margin: 0 auto;
       box-sizing: border-box;
       overflow-x: hidden;
+    }
+    .container {
+      background: #F9F8F3;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -42,24 +49,18 @@
       background: #8C4528;
     }
 
-    @media (min-width: 601px) {
-      body {
-        padding: 2rem;
-      }
-    }
     @media (max-width: 600px) {
       body {
         padding: 1rem;
-      }
-      a {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Welcome, <%= email %></h1>
-  <a href="/generate-workout">Generate a Workout</a><br><br>
-  <a href="/logout">Logout</a>
+  <div class="container">
+    <h1>Welcome, <%= email %></h1>
+    <a href="/generate-workout">Generate a Workout</a><br><br>
+    <a href="/logout">Logout</a>
+  </div>
 </body>
 </html>

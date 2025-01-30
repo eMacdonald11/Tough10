@@ -4,19 +4,26 @@
   <title>Analytics</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      max-width: 600px; /* Force 600px max */
-      margin: 0 auto;
+      background: #ECE7D8;
+      color: #333;
+      margin: 0;
       padding: 2rem;
       box-sizing: border-box;
-      background: #F9F8F3;
-      color: #333;
       overflow-x: hidden;
+    }
+    .container {
+      background: #F9F8F3;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -24,7 +31,6 @@
       margin-bottom: 1.25rem;
       font-size: 1.5rem;
     }
-
     .button-form {
       margin: 1rem 0;
       text-align: center;
@@ -32,7 +38,6 @@
     .button-form button {
       display: block;
       width: 100%;
-      max-width: 100%;
       margin: 0 auto;
       padding: 0.75rem 1.25rem;
       font-size: 1rem;
@@ -58,14 +63,12 @@
       max-width: 100%;
       box-sizing: border-box;
     }
-
     #chart-container {
       width: 100%;
       max-width: 100%;
       margin: 1.25rem auto;
       box-sizing: border-box;
     }
-
     .exercise-container {
       display: flex;
       flex-direction: column;
@@ -73,7 +76,6 @@
       gap: 0.3125rem;
       margin-top: 0.625rem;
     }
-
     .olive-button {
       background-color: #556B2F;
       color: white;
@@ -114,32 +116,33 @@
       }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>Analytics</h1>
-  <p>Select an exercise to view your progress over time.</p>
+  <div class="container">
+    <h1>Analytics</h1>
+    <p>Select an exercise to view your progress over time.</p>
 
-  <div class="exercise-container">
-    <select id="exercise-select">
-      <% exercises.forEach(ex => { %>
-        <option value="<%= ex.exercise_name %>"><%= ex.exercise_name %></option>
-      <% }); %>
-    </select>
+    <div class="exercise-container">
+      <select id="exercise-select">
+        <% exercises.forEach(ex => { %>
+          <option value="<%= ex.exercise_name %>"><%= ex.exercise_name %></option>
+        <% }); %>
+      </select>
+      <button type="button" onclick="fetchAnalyticsData()" class="olive-button">View</button>
+    </div>
 
-    <button type="button" onclick="fetchAnalyticsData()" class="olive-button">View</button>
+    <div id="chart-container">
+      <canvas id="progressChart"></canvas>
+    </div>
+
+    <form action="/generate-workout" method="GET" class="button-form">
+      <button type="submit">Back to Home</button>
+    </form>
   </div>
-
-  <div id="chart-container">
-    <canvas id="progressChart"></canvas>
-  </div>
-
-  <form action="/generate-workout" method="GET" class="button-form">
-    <button type="submit">Back to Home</button>
-  </form>
 
   <script>
     let chartInstance;
-
     async function fetchAnalyticsData() {
       const exercise_name = document.getElementById('exercise-select').value;
       const response = await fetch('/analytics/data', {
@@ -152,22 +155,19 @@
         alert(result.error);
         return;
       }
-
       const { labels, dataAvgWeight, dataAvgReps, dataTotalLoad } = result;
       renderChart(labels, dataAvgWeight, dataAvgReps, dataTotalLoad);
     }
 
     function renderChart(labels, dataAvgWeight, dataAvgReps, dataTotalLoad) {
       const ctx = document.getElementById('progressChart').getContext('2d');
-
       if (chartInstance) {
         chartInstance.destroy();
       }
-
       chartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: labels,
+          labels,
           datasets: [
             {
               label: 'Avg Weight (lbs)',
@@ -197,9 +197,7 @@
         },
         options: {
           scales: {
-            y: {
-              beginAtZero: true
-            }
+            y: { beginAtZero: true }
           }
         }
       });

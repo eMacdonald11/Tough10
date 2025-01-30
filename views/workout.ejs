@@ -11,14 +11,23 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #F9F8F3;
+      background: #ECE7D8;
       color: #333;
-      max-width: 600px; /* Force 600px max */
-      margin: 0 auto;
+      margin: 0;
       padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
+    .container {
+      background: #F9F8F3;
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
+    }
+
     h1 {
       color: #556B2F;
       margin-bottom: 1.25rem;
@@ -30,7 +39,6 @@
       padding: 0;
       margin: 1.25rem 0;
     }
-
     li {
       margin: 0.625rem 0;
       background: #FFF7F0;
@@ -91,7 +99,6 @@
     .button-form button:hover {
       background: #8C4528;
     }
-
     .start-workout-button {
       background: #556B2F !important;
       border-color: #3F4E24 !important;
@@ -100,79 +107,73 @@
       background: #3F4E24 !important;
     }
 
-    @media (min-width: 601px) {
-      body {
-        padding: 2rem;
-      }
-    }
     @media (max-width: 600px) {
       body {
         padding: 1rem;
-      }
-      .button-form button {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
+  <div class="container">
+    <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
 
-  <% if (workout && workout.length > 0) { %>
-    <ul>
-      <% workout.forEach((exercise, index) => { %>
-        <li>
-          <div>
-            <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong>
-            <% if (exercise.lastPerformance) { %>
-              <p>Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
-                 Avg Reps: <%= exercise.lastPerformance.averageReps %></p>
-            <% } else { %>
-              <p>No previous performance data</p>
-            <% } %>
-          </div>
-          <!-- 🔄 Swap button -->
-          <form action="/swap-exercise" method="POST" class="swap-form">
-            <input type="hidden" name="exerciseIndex" value="<%= index %>">
-            <input type="hidden" name="sourcePage" value="preview">
-            <button type="submit" title="Swap this exercise">🔄</button>
-          </form>
-        </li>
-      <% }); %>
-    </ul>
+    <% if (workout && workout.length > 0) { %>
+      <ul>
+        <% workout.forEach((exercise, index) => { %>
+          <li>
+            <div>
+              <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong>
+              <% if (exercise.lastPerformance) { %>
+                <p>Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
+                   Avg Reps: <%= exercise.lastPerformance.averageReps %></p>
+              <% } else { %>
+                <p>No previous performance data</p>
+              <% } %>
+            </div>
+            <!-- 🔄 Swap button -->
+            <form action="/swap-exercise" method="POST" class="swap-form">
+              <input type="hidden" name="exerciseIndex" value="<%= index %>">
+              <input type="hidden" name="sourcePage" value="preview">
+              <button type="submit" title="Swap this exercise">🔄</button>
+            </form>
+          </li>
+        <% }); %>
+      </ul>
 
-    <!-- Start Workout -->
-    <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
-      <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
-      <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
+      <!-- Start Workout -->
+      <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
+        <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
+        <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
+      </form>
+    <% } %>
+
+    <!-- Reporting -->
+    <form action="/analytics" method="GET" class="button-form">
+      <button type="submit">Reporting</button>
     </form>
-  <% } %>
 
-  <!-- Reporting -->
-  <form action="/analytics" method="GET" class="button-form">
-    <button type="submit">Reporting</button>
-  </form>
+    <!-- Info & Logout -->
+    <form action="/info" method="GET" class="button-form">
+      <button type="submit">Info</button>
+    </form>
+    <form action="/logout" method="POST" class="button-form">
+      <button type="submit">Logout</button>
+    </form>
 
-  <!-- Info & Logout -->
-  <form action="/info" method="GET" class="button-form">
-    <button type="submit">Info</button>
-  </form>
-  <form action="/logout" method="POST" class="button-form">
-    <button type="submit">Logout</button>
-  </form>
+    <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
 
-  <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
-
-  <script>
-    function startWorkout() {
-      const silentAudio = document.getElementById('silent-audio');
-      silentAudio.play().then(() => {
-        document.getElementById('start-workout-form').submit();
-      }).catch((error) => {
-        console.error('Audio unlock failed:', error);
-        alert('Unable to start workout due to audio restrictions. Please try again.');
-      });
-    }
-  </script>
+    <script>
+      function startWorkout() {
+        const silentAudio = document.getElementById('silent-audio');
+        silentAudio.play().then(() => {
+          document.getElementById('start-workout-form').submit();
+        }).catch((error) => {
+          console.error('Audio unlock failed:', error);
+          alert('Unable to start workout due to audio restrictions. Please try again.');
+        });
+      }
+    </script>
+  </div>
 </body>
 </html>

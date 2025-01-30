@@ -11,14 +11,21 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #F9F8F3;
+      background: #ECE7D8; /* Darker outside */
       color: #333;
-      /* Force main container to max 600px */
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 2rem; 
+      margin: 0;
+      padding: 2rem;
       box-sizing: border-box;
-      overflow-x: hidden; 
+      overflow-x: hidden;
+    }
+    .container {
+      background: #F9F8F3; /* Lighter inside */
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -214,91 +221,92 @@
   </style>
 </head>
 <body>
-  <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
+  <div class="container"><!-- Outer .container box -->
+    <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
 
-  <!-- Muscle Group Selection + Dumbbell Toggle -->
-  <form action="/generate-workout" method="POST" class="button-form">
-    <p style="font-weight: 600;">Area of Focus:</p>
-    <select name="muscleGroup" required>
-      <option value="legs" <%= muscleGroup === 'legs' ? 'selected' : '' %>>Legs</option>
-      <option value="shouldersAndBack" <%= muscleGroup === 'shouldersAndBack' ? 'selected' : '' %>>Shoulders and Back</option>
-      <option value="chestArmsAndAbs" <%= muscleGroup === 'chestArmsAndAbs' ? 'selected' : '' %>>Chest, Arms, and Abs</option>
-    </select>
+    <!-- Muscle Group Selection + Dumbbell Toggle -->
+    <form action="/generate-workout" method="POST" class="button-form">
+      <p style="font-weight: 600;">Area of Focus:</p>
+      <select name="muscleGroup" required>
+        <option value="legs" <%= muscleGroup === 'legs' ? 'selected' : '' %>>Legs</option>
+        <option value="shouldersAndBack" <%= muscleGroup === 'shouldersAndBack' ? 'selected' : '' %>>Shoulders and Back</option>
+        <option value="chestArmsAndAbs" <%= muscleGroup === 'chestArmsAndAbs' ? 'selected' : '' %>>Chest, Arms, and Abs</option>
+      </select>
 
-    <div class="toggle-container">
-      <label class="switch">
-        <input 
-          type="checkbox" 
-          id="dumbbell-only" 
-          name="dumbbell_only" 
-          value="1" 
-          <%= dumbbellOnly ? 'checked' : '' %>
-        >
-        <span class="slider"></span>
-      </label>
-    </div>
+      <div class="toggle-container">
+        <label class="switch">
+          <input 
+            type="checkbox" 
+            id="dumbbell-only" 
+            name="dumbbell_only" 
+            value="1" 
+            <%= dumbbellOnly ? 'checked' : '' %>
+          >
+          <span class="slider"></span>
+        </label>
+      </div>
 
-    <button type="submit">Generate Workout</button>
-  </form>
-
-  <% if (workout && workout.length > 0) { %>
-    <ul>
-      <% workout.forEach((exercise, index) => { %>
-        <li class="workout-item">
-          <div class="item-info">
-            <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong><br>
-            <% if (exercise.lastPerformance) { %>
-              Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
-              Avg Reps: <%= exercise.lastPerformance.averageReps %>
-            <% } else { %>
-              No performance data available
-            <% } %>
-          </div>
-          <!-- 🔄 Swap button form -->
-          <form action="/swap-exercise" method="POST" class="swap-form">
-            <input type="hidden" name="exerciseIndex" value="<%= index %>">
-            <input type="hidden" name="sourcePage" value="generate">
-            <button type="submit" title="Swap this exercise">🔄</button>
-          </form>
-        </li>
-      <% }); %>
-    </ul>
-
-    <!-- "Start Workout" Button -->
-    <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
-      <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
-      <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
+      <button type="submit">Generate Workout</button>
     </form>
-  <% } %>
 
-  <!-- "Reporting" button -->
-  <form action="/analytics" method="GET" class="button-form">
-    <button type="submit">Reporting</button>
-  </form>
+    <% if (workout && workout.length > 0) { %>
+      <ul>
+        <% workout.forEach((exercise, index) => { %>
+          <li class="workout-item">
+            <div class="item-info">
+              <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong><br>
+              <% if (exercise.lastPerformance) { %>
+                Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
+                Avg Reps: <%= exercise.lastPerformance.averageReps %>
+              <% } else { %>
+                No performance data available
+              <% } %>
+            </div>
+            <!-- 🔄 Swap button form -->
+            <form action="/swap-exercise" method="POST" class="swap-form">
+              <input type="hidden" name="exerciseIndex" value="<%= index %>">
+              <input type="hidden" name="sourcePage" value="generate">
+              <button type="submit" title="Swap this exercise">🔄</button>
+            </form>
+          </li>
+        <% }); %>
+      </ul>
 
-  <!-- Info & Logout Buttons -->
-  <form action="/info" method="GET" class="button-form">
-    <button type="submit">Info</button>
-  </form>
+      <!-- "Start Workout" Button -->
+      <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
+        <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
+        <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
+      </form>
+    <% } %>
 
-  <form action="/logout" method="POST" class="button-form">
-    <button type="submit">Logout</button>
-  </form>
+    <!-- "Reporting" button -->
+    <form action="/analytics" method="GET" class="button-form">
+      <button type="submit">Reporting</button>
+    </form>
 
-  <!-- Hidden Silent Audio for Unlocking Audio Context -->
-  <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
+    <!-- Info & Logout Buttons -->
+    <form action="/info" method="GET" class="button-form">
+      <button type="submit">Info</button>
+    </form>
+    <form action="/logout" method="POST" class="button-form">
+      <button type="submit">Logout</button>
+    </form>
 
-  <script>
-    // Function to handle Start Workout button click
-    function startWorkout() {
-      const silentAudio = document.getElementById('silent-audio');
-      silentAudio.play().then(() => {
-        document.getElementById('start-workout-form').submit();
-      }).catch((error) => {
-        console.error('Audio unlock failed:', error);
-        alert('Unable to start workout due to audio restrictions. Please try again.');
-      });
-    }
-  </script>
+    <!-- Hidden Silent Audio for Unlocking Audio Context -->
+    <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
+
+    <script>
+      // Function to handle Start Workout button click
+      function startWorkout() {
+        const silentAudio = document.getElementById('silent-audio');
+        silentAudio.play().then(() => {
+          document.getElementById('start-workout-form').submit();
+        }).catch((error) => {
+          console.error('Audio unlock failed:', error);
+          alert('Unable to start workout due to audio restrictions. Please try again.');
+        });
+      }
+    </script>
+  </div>
 </body>
 </html>

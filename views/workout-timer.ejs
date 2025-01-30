@@ -8,34 +8,42 @@
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* 
-      Mobile-first single-column, cohesive design for timers and input form. 
-      Timers, forms, and containers adjust to screen size, 
-      capped at 600px for a consistent, centered UI.
+    /*
+      Body is #ECE7D8 (slightly darker),
+      .container is #F9F8F3 with max-width:650px,
+      everything else is your existing design.
     */
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #F9F8F3;
+      background: #ECE7D8; /* Darker outside */
       color: #333;
-      max-width: 600px; /* <-- ensures the page content doesn’t exceed 600px wide */
-      margin: 0 auto;
+      margin: 0;
       padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
+    .container {
+      background: #F9F8F3; /* Lighter inside */
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
+    }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem;
-      font-size: 1.5rem;
+      margin-bottom: 1.25rem; 
+      font-size: 1.5rem; 
     }
 
     .timer-container {
-      display: block;
-      margin: 0 auto 1.25rem auto;
+      display: block; 
+      margin: 0 auto 1.25rem auto; 
       background: #ffc87f;
-      padding: 1rem;
+      padding: 1rem; 
       border-radius: 5px;
       border: 1px solid #EEE;
       width: 100%;
@@ -46,15 +54,14 @@
       box-sizing: border-box;
     }
 
-    /* Adjusted <h3> margins within #prep-timer */
     #prep-timer h3 {
-      margin-top: 0.25rem;
-      margin-bottom: 0.5rem;
+      margin-top: 0.25rem; 
+      margin-bottom: 0.5rem; 
     }
 
     #exercise-name {
       display: none;
-      margin: 0 auto 1rem auto;
+      margin: 0 auto 1rem auto; 
       width: 100%;
       max-width: 300px;
       font-weight: bold;
@@ -62,14 +69,13 @@
       box-sizing: border-box;
     }
 
-    /* Set Data form */
     #input-form {
       display: none;
-      margin: 1.25rem auto 0 auto;
+      margin: 1.25rem auto 0 auto; 
       width: 100%;
       max-width: 300px;
       background: #FFF;
-      padding: 1rem;
+      padding: 1rem; 
       border-radius: 5px;
       border: 1px solid #EEE;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -78,10 +84,10 @@
     }
     #input-form h3 {
       margin-top: 0;
-      margin-bottom: 0.9375rem;
-      font-size: 1.125rem;
+      margin-bottom: 0.9375rem; 
+      font-size: 1.125rem; 
       color: #556B2F;
-      text-align: center;
+      text-align: center; 
     }
     .input-row {
       margin-bottom: 1rem;
@@ -90,15 +96,15 @@
       display: block;
       width: 100%;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 1rem; 
       color: #333;
       margin-bottom: 0.5rem;
     }
     .input-row input[type="number"] {
-      width: 100%;
-      font-size: 1rem;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
+      width: 100%; 
+      font-size: 1rem; 
+      padding: 0.5rem; 
+      margin-bottom: 0.5rem; 
       border: 1px solid #CCC;
       border-radius: 3px;
       box-sizing: border-box;
@@ -107,8 +113,7 @@
     #input-form button {
       display: block;
       width: 100%;
-      /* up to 600px if you like, or just keep 100%: 
-         max-width: 600px; */
+      max-width: 600px;
       margin: 0.9375rem auto 0 auto;
       padding: 0.75rem 1.25rem;
       font-size: 1rem;
@@ -133,12 +138,11 @@
     }
 
     p, li {
-      font-size: 1rem;
+      font-size: 1rem; 
       line-height: 1.5;
       color: #333;
     }
 
-    /* "I'm Ready!" button */
     #ready-button {
       display: block;
       margin: 1.25rem auto 0 auto;
@@ -157,7 +161,6 @@
       background: #3F4E24;
     }
 
-    /* Responsive Adjustments */
     @media (min-width: 601px) {
       body {
         padding: 2rem;
@@ -171,348 +174,343 @@
   </style>
 </head>
 <body>
-  <h1> TOUGH10 </h1>
+  <div class="container"><!-- Our new 650px container with a lighter background -->
+    <h1> TOUGH10 </h1>
 
-  <!-- PREP TIMER (initial preview before the first exercise) -->
-  <div id="prep-timer" class="timer-container">
-    <h3>Your next exercise:</h3>
-    <div id="exercise-details">
-      <h2><%= workout[0]?.exercise_name || 'Exercise Name Not Available' %></h2>
-      <p>
-        <%= workout[0]?.lastPerformance
-          ? `Avg Weight: ${workout[0].lastPerformance.averageWeight} lbs, Avg Reps: ${workout[0].lastPerformance.averageReps}`
-          : 'No performance data available' %>
-      </p>
+    <!-- PREP TIMER (initial preview before the first exercise) -->
+    <div id="prep-timer" class="timer-container">
+      <h3>Your next exercise:</h3>
+      <div id="exercise-details">
+        <h2><%= workout[0]?.exercise_name || 'Exercise Name Not Available' %></h2>
+        <p>
+          <%= workout[0]?.lastPerformance
+            ? `Avg Weight: ${workout[0].lastPerformance.averageWeight} lbs, Avg Reps: ${workout[0].lastPerformance.averageReps}`
+            : 'No performance data available' %>
+        </p>
+      </div>
+      <div>Prepare to begin in: <span id="prep-remaining">15</span>s</div>
     </div>
-    <div>Prepare to begin in: <span id="prep-remaining">15</span>s</div>
-  </div>
 
-  <!-- ACTIVE EXERCISE TIMER -->
-  <div id="exercise-name"></div>
-  <div id="timer" class="timer-container" style="display: none;">
-    Time Remaining: <span id="time-remaining">30</span>s
-  </div>
-
-  <!-- REST TIMER -->
-  <div id="rest-timer" class="timer-container" style="display: none;">
-    Next set begins in: <span id="rest-remaining">20</span>s
-  </div>
-
-  <!-- INPUT FORM: "Enter Your Set Data" -->
-  <div id="input-form">
-    <h3>Enter Your Set Data</h3>
-    <div class="input-row">
-      <label for="weight-input">Weight</label>
-      <input type="number" id="weight-input" placeholder="lbs">
+    <!-- ACTIVE EXERCISE TIMER -->
+    <div id="exercise-name"></div>
+    <div id="timer" class="timer-container" style="display: none;">
+      Time Remaining: <span id="time-remaining">30</span>s
     </div>
-    <div class="input-row">
-      <label for="reps-input">Reps</label>
-      <input type="number" id="reps-input" placeholder="reps">
+
+    <!-- REST TIMER -->
+    <div id="rest-timer" class="timer-container" style="display: none;">
+      Next set begins in: <span id="rest-remaining">20</span>s
     </div>
-    <button onclick="submitSetData()">Submit</button>
-    <div class="feedback" id="feedback-message"></div>
-  </div>
 
-  <!-- AUDIO -->
-  <audio id="countdown" src="/audio/countdown.mp3" preload="auto"></audio>
-  <audio id="bell" src="/audio/bell.mp3" preload="auto"></audio>
-  <audio id="halfway-sound" src="/audio/halfway.mp3" preload="auto"></audio>
-  <!-- Silent Audio for Unlocking Audio Context -->
-  <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
+    <!-- INPUT FORM: "Enter Your Set Data" -->
+    <div id="input-form">
+      <h3>Enter Your Set Data</h3>
+      <div class="input-row">
+        <label for="weight-input">Weight</label>
+        <input type="number" id="weight-input" placeholder="lbs">
+      </div>
+      <div class="input-row">
+        <label for="reps-input">Reps</label>
+        <input type="number" id="reps-input" placeholder="reps">
+      </div>
+      <button onclick="submitSetData()">Submit</button>
+      <div class="feedback" id="feedback-message"></div>
+    </div>
 
-  <!-- "I'm Ready!" Button -->
-  <button id="ready-button" onclick="readyButtonClicked()">I'm Ready!</button>
+    <!-- AUDIO -->
+    <audio id="countdown" src="/audio/countdown.mp3" preload="auto"></audio>
+    <audio id="bell" src="/audio/bell.mp3" preload="auto"></audio>
+    <audio id="halfway-sound" src="/audio/halfway.mp3" preload="auto"></audio>
+    <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
 
-  <script>
-    /*
-      Final Logic:
-        Exercise 1 (type1): 3 sets, 50s each, 30s rest, then 60s rest to preview next exercise.
-        Exercise 2 (type2): 4 sets, 30s each, 20s rest, then 60s rest to preview final exercise.
-        Exercise 3 (type3): 1 set, 90s, end workout afterward.
-    */
+    <!-- "I'm Ready!" Button -->
+    <button id="ready-button" onclick="readyButtonClicked()">I'm Ready!</button>
 
-    const workout = JSON.parse('<%- JSON.stringify(workout) %>');
+    <script>
+      /*
+        Final Logic:
+          Exercise 1 (type1): 3 sets, 50s each, 30s rest, then 60s rest to preview next exercise.
+          Exercise 2 (type2): 4 sets, 30s each, 20s rest, then 60s rest to preview final exercise.
+          Exercise 3 (type3): 1 set, 90s, end workout afterward.
+      */
 
-    const EXERCISE_INFO = [
-      { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 },
-      { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
-      { sets: 1, exerciseDuration: 90, intraRest: 0, postExerciseRest: 0 }
-    ];
+      const workout = JSON.parse('<%- JSON.stringify(workout) %>');
 
-    let currentExerciseIndex = 0;
-    let currentSet = 1;
-    let timeRemaining;
-    let timerInterval;
-    let halfwayPlayed = false;
-    let restTimeRemaining;
-    let restInterval;
-    let prepTimeRemaining = 15;
-    let prepInterval;
+      const EXERCISE_INFO = [
+        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 }, 
+        { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
+        { sets: 1, exerciseDuration: 90, intraRest: 0,  postExerciseRest: 0 } 
+      ];
 
-    // DOM references
-    const exerciseNameEl = document.getElementById('exercise-name');
-    const timeRemainingEl = document.getElementById('time-remaining');
-    const restTimerEl = document.getElementById('rest-timer');
-    const restRemainingEl = document.getElementById('rest-remaining');
-    const prepTimerEl = document.getElementById('prep-timer');
-    const prepRemainingEl = document.getElementById('prep-remaining');
-    const inputFormEl = document.getElementById('input-form');
-    const weightInputEl = document.getElementById('weight-input');
-    const repsInputEl = document.getElementById('reps-input');
-    const feedbackMessageEl = document.getElementById('feedback-message');
+      let currentExerciseIndex = 0; 
+      let currentSet = 1;
+      let timeRemaining;
+      let timerInterval;
+      let halfwayPlayed = false;
+      let restTimeRemaining;
+      let restInterval;
+      let prepTimeRemaining = 15;
+      let prepInterval;
 
-    const countdownAudio = document.getElementById('countdown');
-    const bell = document.getElementById('bell');
-    const halfwaySound = document.getElementById('halfway-sound');
-    const silentAudio = document.getElementById('silent-audio');
+      // DOM references
+      const exerciseNameEl = document.getElementById('exercise-name');
+      const timeRemainingEl = document.getElementById('time-remaining');
+      const restTimerEl = document.getElementById('rest-timer');
+      const restRemainingEl = document.getElementById('rest-remaining');
+      const prepTimerEl = document.getElementById('prep-timer');
+      const prepRemainingEl = document.getElementById('prep-remaining');
+      const inputFormEl = document.getElementById('input-form');
+      const weightInputEl = document.getElementById('weight-input');
+      const repsInputEl = document.getElementById('reps-input');
+      const feedbackMessageEl = document.getElementById('feedback-message');
 
-    // If no workout data, redirect
-    if (!workout || workout.length === 0) {
-      window.location.href = '/generate-workout';
-    }
+      const countdownAudio = document.getElementById('countdown');
+      const bell = document.getElementById('bell');
+      const halfwaySound = document.getElementById('halfway-sound');
+      const silentAudio = document.getElementById('silent-audio');
 
-    // Handle "I'm Ready!" button click
-    function readyButtonClicked() {
-      silentAudio.play().then(() => {
-        document.getElementById('ready-button').style.display = 'none';
-        startPrepTimer();
-      }).catch((error) => {
-        console.error('Silent audio playback failed:', error);
-        alert('Unable to start workout due to audio restrictions. Please try again.');
-      });
-    }
-
-    function startPrepTimer() {
-      const currentExercise = workout[currentExerciseIndex];
-      if (!currentExercise) {
+      // If no workout data, redirect
+      if (!workout || workout.length === 0) {
         window.location.href = '/generate-workout';
-        return;
-      }
-      prepTimerEl.querySelector('h2').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
-      prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(currentExercise);
-
-      prepTimerEl.style.display = 'block';
-
-      prepInterval = setInterval(() => {
-        prepTimeRemaining--;
-        prepRemainingEl.innerText = prepTimeRemaining;
-        if (prepTimeRemaining === 5) {
-          countdownAudio.currentTime = 0;
-          countdownAudio.play();
-        }
-        if (prepTimeRemaining <= 0) {
-          clearInterval(prepInterval);
-          prepTimerEl.style.display = 'none';
-          startTimer();
-        }
-      }, 1000);
-    }
-
-    // Helper: return average performance text
-    function fetchPreviousPerformance(exercise) {
-      if (exercise.lastPerformance) {
-        return `Avg Weight: ${exercise.lastPerformance.averageWeight} lbs, Avg Reps: ${exercise.lastPerformance.averageReps}`;
-      }
-      return 'No performance data available';
-    }
-
-    function startTimer() {
-      const { sets, exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
-      const exercise = workout[currentExerciseIndex];
-      if (!exercise) {
-        window.location.href = '/generate-workout';
-        return;
       }
 
-      exerciseNameEl.style.display = 'block';
-      exerciseNameEl.innerHTML = `
-        ${exercise.exercise_name} - Set ${currentSet} of ${sets}
-        <br>
-        <span style="font-weight:normal; font-size:0.9rem;">
-          ${fetchPreviousPerformance(exercise)}
-        </span>
-      `;
-
-      document.getElementById('timer').style.display = 'block';
-
-      timeRemaining = exerciseDuration;
-      timeRemainingEl.innerText = timeRemaining;
-      halfwayPlayed = false;
-
-      const halfwayMarker = Math.floor(timeRemaining / 2);
-
-      timerInterval = setInterval(() => {
-        timeRemaining--;
-        timeRemainingEl.innerText = timeRemaining;
-
-        if (!halfwayPlayed && timeRemaining === halfwayMarker) {
-          halfwaySound.currentTime = 0;
-          halfwaySound.play();
-          halfwayPlayed = true;
-        }
-        if (timeRemaining === 5) {
-          countdownAudio.currentTime = 0;
-          countdownAudio.play();
-        }
-        if (timeRemaining <= 0) {
-          clearInterval(timerInterval);
-          bell.currentTime = 0;
-          bell.play();
-          showInputForm();
-        }
-      }, 1000);
-    }
-
-    function showInputForm() {
-      // Show the set data form
-      inputFormEl.style.display = 'block';
-      weightInputEl.value = '';
-      repsInputEl.value = '';
-      feedbackMessageEl.innerText = '';
-      weightInputEl.focus();
-    }
-
-    // Submit set data => fetch updated performance => next set or next exercise
-    async function submitSetData() {
-      const weight = Number(weightInputEl.value);
-      const reps = Number(repsInputEl.value);
-
-      if (!weight || !reps || isNaN(weight) || isNaN(reps)) {
-        alert('Please enter valid weight and reps');
-        return;
-      }
-
-      const exercise = workout[currentExerciseIndex];
-      try {
-        // 1) Save the data
-        const saveResp = await fetch('/save-workout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            exercise_name: exercise.exercise_name,
-            muscle_group: exercise.muscle_group,
-            weight,
-            reps
-          })
+      function readyButtonClicked() {
+        silentAudio.play().then(() => {
+          document.getElementById('ready-button').style.display = 'none';
+          startPrepTimer();
+        }).catch((error) => {
+          console.error('Silent audio playback failed:', error);
+          alert('Unable to start workout due to audio restrictions. Please try again.');
         });
+      }
 
-        if (!saveResp.ok) {
-          alert('Error saving data');
+      function startPrepTimer() {
+        const currentExercise = workout[currentExerciseIndex];
+        if (!currentExercise) {
+          window.location.href = '/generate-workout';
           return;
         }
+        // Update the exercise details
+        prepTimerEl.querySelector('h2').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
+        prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(currentExercise);
 
-        // 2) Fetch updated performance
-        const perfResp = await fetch('/get-updated-performance', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ exercise_name: exercise.exercise_name })
-        });
-        if (!perfResp.ok) {
-          alert('Error fetching updated performance');
-          return;
-        }
-        const perfData = await perfResp.json();
-        workout[currentExerciseIndex].lastPerformance = perfData.lastPerformance;
+        prepTimerEl.style.display = 'block';
 
-        feedbackMessageEl.innerText = 'Data saved!';
-        setTimeout(() => {
-          feedbackMessageEl.innerText = '';
-          proceedToNextSetOrExercise();
+        prepInterval = setInterval(() => {
+          prepTimeRemaining--;
+          prepRemainingEl.innerText = prepTimeRemaining;
+          if (prepTimeRemaining === 5) {
+            countdownAudio.currentTime = 0;
+            countdownAudio.play();
+          }
+          if (prepTimeRemaining <= 0) {
+            clearInterval(prepInterval);
+            prepTimerEl.style.display = 'none';
+            startTimer();
+          }
         }, 1000);
-
-      } catch (error) {
-        console.error('Error saving set data or fetching performance:', error);
-        alert('Error saving/fetching data');
       }
-    }
 
-    function proceedToNextSetOrExercise() {
-      const { sets, intraRest, postExerciseRest } = EXERCISE_INFO[currentExerciseIndex];
-      inputFormEl.style.display = 'none';
-      document.getElementById('timer').style.display = 'none';
+      function fetchPreviousPerformance(exercise) {
+        if (exercise.lastPerformance) {
+          return `Avg Weight: ${exercise.lastPerformance.averageWeight} lbs, Avg Reps: ${exercise.lastPerformance.averageReps}`;
+        }
+        return 'No performance data available';
+      }
 
-      if (currentSet < sets) {
-        currentSet++;
-        startRestTimer(intraRest);
-      } else {
-        // Move to next exercise
-        currentSet = 1;
-        currentExerciseIndex++;
-        if (currentExerciseIndex >= EXERCISE_INFO.length) {
-          window.location.href = '/workout-complete';
-        } else {
-          startNextExercisePreview(postExerciseRest || 60);
+      function startTimer() {
+        const { sets, exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
+        const exercise = workout[currentExerciseIndex];
+        if (!exercise) {
+          window.location.href = '/generate-workout';
+          return;
+        }
+
+        exerciseNameEl.style.display = 'block';
+        exerciseNameEl.innerHTML = `
+          ${exercise.exercise_name} - Set ${currentSet} of ${sets}
+          <br>
+          <span style="font-weight:normal; font-size:0.9rem;">
+            ${fetchPreviousPerformance(exercise)}
+          </span>
+        `;
+        
+        document.getElementById('timer').style.display = 'block';
+
+        timeRemaining = exerciseDuration;
+        timeRemainingEl.innerText = timeRemaining;
+        halfwayPlayed = false;
+
+        const halfwayMarker = Math.floor(timeRemaining / 2);
+
+        timerInterval = setInterval(() => {
+          timeRemaining--;
+          timeRemainingEl.innerText = timeRemaining;
+
+          if (!halfwayPlayed && timeRemaining === halfwayMarker) {
+            halfwaySound.currentTime = 0;
+            halfwaySound.play();
+            halfwayPlayed = true;
+          }
+          if (timeRemaining === 5) {
+            countdownAudio.currentTime = 0;
+            countdownAudio.play();
+          }
+          if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            bell.currentTime = 0;
+            bell.play();
+            showInputForm();
+          }
+        }, 1000);
+      }
+
+      function showInputForm() {
+        inputFormEl.style.display = 'block';
+        weightInputEl.value = '';
+        repsInputEl.value = '';
+        feedbackMessageEl.innerText = '';
+        weightInputEl.focus();
+      }
+
+      async function submitSetData() {
+        const weight = Number(weightInputEl.value);
+        const reps = Number(repsInputEl.value);
+
+        if (!weight || !reps || isNaN(weight) || isNaN(reps)) {
+          alert('Please enter valid weight and reps');
+          return;
+        }
+
+        const exercise = workout[currentExerciseIndex];
+        try {
+          const saveResp = await fetch('/save-workout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              exercise_name: exercise.exercise_name,
+              muscle_group: exercise.muscle_group,
+              weight,
+              reps
+            })
+          });
+
+          if (!saveResp.ok) {
+            alert('Error saving data');
+            return;
+          }
+
+          const perfResp = await fetch('/get-updated-performance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exercise_name: exercise.exercise_name })
+          });
+          if (!perfResp.ok) {
+            alert('Error fetching updated performance');
+            return;
+          }
+          const perfData = await perfResp.json();
+          workout[currentExerciseIndex].lastPerformance = perfData.lastPerformance;
+
+          feedbackMessageEl.innerText = 'Data saved!';
+          setTimeout(() => {
+            feedbackMessageEl.innerText = '';
+            proceedToNextSetOrExercise();
+          }, 1000);
+
+        } catch (error) {
+          console.error('Error saving set data or fetching performance:', error);
+          alert('Error saving/fetching data');
         }
       }
-    }
 
-    function startRestTimer(duration) {
-      const exercise = workout[currentExerciseIndex];
-      const { sets } = EXERCISE_INFO[currentExerciseIndex];
+      function proceedToNextSetOrExercise() {
+        const { sets, intraRest, postExerciseRest } = EXERCISE_INFO[currentExerciseIndex];
+        inputFormEl.style.display = 'none';
+        document.getElementById('timer').style.display = 'none';
 
-      exerciseNameEl.innerHTML = `
-        ${exercise.exercise_name} - Set ${currentSet} of ${sets}
-        <br>
-        <span style="font-weight:normal; font-size:0.9rem;">
-          ${fetchPreviousPerformance(exercise)}
-        </span>
-      `;
-      exerciseNameEl.style.display = 'block';
+        if (currentSet < sets) {
+          currentSet++;
+          startRestTimer(intraRest);
+        } else {
+          currentSet = 1;
+          currentExerciseIndex++;
+          if (currentExerciseIndex >= EXERCISE_INFO.length) {
+            window.location.href = '/workout-complete';
+          } else {
+            startNextExercisePreview(postExerciseRest || 60);
+          }
+        }
+      }
 
-      restTimerEl.style.display = 'block';
-      restTimeRemaining = duration;
-      restRemainingEl.innerText = restTimeRemaining;
+      function startRestTimer(duration) {
+        const exercise = workout[currentExerciseIndex];
+        const { sets } = EXERCISE_INFO[currentExerciseIndex];
 
-      if (restInterval) clearInterval(restInterval);
-      restInterval = setInterval(() => {
-        restTimeRemaining--;
+        exerciseNameEl.innerHTML = `
+          ${exercise.exercise_name} - Set ${currentSet} of ${sets}
+          <br>
+          <span style="font-weight:normal; font-size:0.9rem;">
+            ${fetchPreviousPerformance(exercise)}
+          </span>
+        `;
+        exerciseNameEl.style.display = 'block';
+
+        restTimerEl.style.display = 'block';
+        restTimeRemaining = duration;
         restRemainingEl.innerText = restTimeRemaining;
 
-        if (restTimeRemaining === 5) {
-          countdownAudio.currentTime = 0;
-          countdownAudio.play();
-        }
-        if (restTimeRemaining <= 0) {
-          clearInterval(restInterval);
-          restTimerEl.style.display = 'none';
-          startTimer();
-        }
-      }, 1000);
-    }
+        if (restInterval) clearInterval(restInterval);
+        restInterval = setInterval(() => {
+          restTimeRemaining--;
+          restRemainingEl.innerText = restTimeRemaining;
 
-    function startNextExercisePreview(prepDuration) {
-      prepTimerEl.style.display = 'block';
-      restTimerEl.style.display = 'none';
-      exerciseNameEl.style.display = 'none';
-      inputFormEl.style.display = 'none';
-
-      const nextExercise = workout[currentExerciseIndex];
-      if (!nextExercise) {
-        window.location.href = '/workout-complete';
-        return;
+          if (restTimeRemaining === 5) {
+            countdownAudio.currentTime = 0;
+            countdownAudio.play();
+          }
+          if (restTimeRemaining <= 0) {
+            clearInterval(restInterval);
+            restTimerEl.style.display = 'none';
+            startTimer();
+          }
+        }, 1000);
       }
 
-      prepTimerEl.querySelector('h2').innerText = nextExercise.exercise_name || 'Exercise Name Not Available';
-      prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(nextExercise);
+      function startNextExercisePreview(prepDuration) {
+        prepTimerEl.style.display = 'block';
+        restTimerEl.style.display = 'none';
+        exerciseNameEl.style.display = 'none';
+        inputFormEl.style.display = 'none';
 
-      let nextPrepTimeRemaining = prepDuration;
-      prepRemainingEl.innerText = nextPrepTimeRemaining;
+        const nextExercise = workout[currentExerciseIndex];
+        if (!nextExercise) {
+          window.location.href = '/workout-complete';
+          return;
+        }
 
-      if (prepInterval) clearInterval(prepInterval);
-      prepInterval = setInterval(() => {
-        nextPrepTimeRemaining--;
+        prepTimerEl.querySelector('h2').innerText = nextExercise.exercise_name || 'Exercise Name Not Available';
+        prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(nextExercise);
+
+        let nextPrepTimeRemaining = prepDuration;
         prepRemainingEl.innerText = nextPrepTimeRemaining;
-        if (nextPrepTimeRemaining === 5) {
-          countdownAudio.currentTime = 0;
-          countdownAudio.play();
-        }
-        if (nextPrepTimeRemaining <= 0) {
-          clearInterval(prepInterval);
-          prepTimerEl.style.display = 'none';
-          startTimer();
-        }
-      }, 1000);
-    }
-  </script>
+
+        if (prepInterval) clearInterval(prepInterval);
+        prepInterval = setInterval(() => {
+          nextPrepTimeRemaining--;
+          prepRemainingEl.innerText = nextPrepTimeRemaining;
+          if (nextPrepTimeRemaining === 5) {
+            countdownAudio.currentTime = 0;
+            countdownAudio.play();
+          }
+          if (nextPrepTimeRemaining <= 0) {
+            clearInterval(prepInterval);
+            prepTimerEl.style.display = 'none';
+            startTimer();
+          }
+        }, 1000);
+      }
+    </script>
+  </div><!-- end .container -->
 </body>
 </html>

@@ -3,26 +3,34 @@
 <head>
   <title>Highly Effective 10 Minute Workouts</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Google Font and styling for consistency -->
+  <!-- Google Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 
-      Index page (Landing):
-      Simple intro page encouraging login or registration.
+    /*
+      Landing page with an outer container of 650px
+      Body = slightly darker (#ECE7D8)
+      .container = #F9F8F3
     */
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #F9F8F3;
+      background: #ECE7D8;  /* Slightly darker outside */
       color: #333;
-      /* Force the body to max 600px wide */
-      max-width: 600px;
-      margin: 0 auto;
+      margin: 0;
       padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
+    }
+    .container {
+      background: #F9F8F3;  /* Lighter inside */
+      max-width: 650px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-radius: 10px;
+      border: 1px solid #DDD;
+      box-sizing: border-box;
     }
 
     h1 {
@@ -47,27 +55,20 @@
       background: #8C4528;
     }
 
-    @media (min-width: 601px) {
-      body {
-        padding: 2rem;
-      }
-    }
     @media (max-width: 600px) {
       body {
         padding: 1rem;
-      }
-      a {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Index (Landing) page -->
-  <h1>TOUGH10</h1>
+  <div class="container">
+    <h1>TOUGH10</h1>
 
-  <!-- Links to login or register -->
-  <a href="/login" style="display: block; margin: 0.625rem auto;">Login</a>
-  <a href="/register" style="display: block; margin: 0.625rem auto;">Register</a>
+    <!-- Links to login or register -->
+    <a href="/login" style="display: block; margin: 0.625rem auto;">Login</a>
+    <a href="/register" style="display: block; margin: 0.625rem auto;">Register</a>
+  </div>
 </body>
 </html>
