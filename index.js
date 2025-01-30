@@ -1,12 +1,12 @@
 // Import required modules
-const express = require('express'); // Framework for building the app
-const path = require('path'); // Utility for handling file paths
-const bodyParser = require('body-parser'); // Middleware to parse request bodies
-const session = require('express-session'); // Middleware to manage user sessions
-const bcrypt = require('bcrypt'); // Library for hashing passwords securely
-const supabase = require('./supabase'); // Supabase client for interacting with the database
+const express = require('express'); 
+const path = require('path'); 
+const bodyParser = require('body-parser'); 
+const session = require('express-session'); 
+const bcrypt = require('bcrypt'); 
+const supabase = require('./supabase'); 
 
-const app = express(); // Initialize the Express app
+const app = express();
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}/`);
@@ -15,14 +15,14 @@ app.listen(PORT, () => {
 /* ==========================
    Middleware Setup
 ========================== */
-app.use(express.json()); // Parse JSON request bodies for APIs
-app.use(bodyParser.urlencoded({ extended: true })); // Parse form-encoded data for HTML forms
-app.use(express.static(path.join(__dirname, 'public'))); // Serve static files (CSS, JS, images) from 'public' directory
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({
-  secret: 'your-secret-key', // Secret key for signing session cookies
-  resave: false, // Don't save session if unmodified
-  saveUninitialized: true, // Save uninitialized sessions
-  cookie: { secure: false } // In production, set secure: true for HTTPS
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }
 }));
 
 // Set EJS as the templating engine and specify the views directory
@@ -36,13 +36,48 @@ app.set('views', path.join(__dirname, 'views'));
 // Middleware to ensure route is accessible only if user is logged in
 function isAuthenticated(req, res, next) {
   if (req.session.user) {
-    return next(); // User is authenticated; proceed
+    return next();
   }
-  // If not authenticated, redirect to login
   res.redirect('/login');
 }
 
-// Function to generate a random workout for a given muscle group and equipment preference
+// Helper to fetch past performance stats for a given user + exercise
+async function fetchPerformanceData(userId, exerciseName) {
+  const { data: allPastSets, error: performanceError } = await supabase
+    .from('workouts')
+    .select('weight, reps')
+    .eq('user_id', userId)
+    .eq('exercise_name', exerciseName);
+
+  if (performanceError) {
+    console.error("Error fetching past performance:", performanceError);
+    return null;
+  }
+
+  if (!allPastSets || allPastSets.length === 0) {
+    // No past sets => no performance data
+    return null;
+  }
+
+  let totalWeight = 0;
+  let totalReps = 0;
+  let totalSets = allPastSets.length;
+  for (const record of allPastSets) {
+    totalWeight += record.weight * record.reps;
+    totalReps += record.reps;
+  }
+
+  const avgWeightPerRep = totalWeight / totalReps; 
+  const avgRepsPerSet = totalReps / totalSets;
+
+  return {
+    averageWeight: avgWeightPerRep.toFixed(1),
+    averageReps: avgRepsPerSet.toFixed(1),
+    totalSets
+  };
+}
+
+// Function to generate a random workout for a given muscle group + equipment
 async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
   // Build the query
   let query = supabase
@@ -50,76 +85,39 @@ async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
     .select('*')
     .eq('muscle_group', muscleGroup);
 
-  // If dumbbellOnly is true, add an additional filter
+  // If dumbbellOnly is true, add filter
   if (dumbbellOnly) {
     query = query.eq('dumbbell_only', true);
   }
 
-  // Fetch exercises from Supabase
+  // Fetch exercises
   const { data: groupExercises, error } = await query;
-
   if (error) {
     console.error("Error fetching exercises:", error);
-    return []; // Return empty array if error
+    return [];
   }
-
   if (!groupExercises || groupExercises.length === 0) {
-    return []; // No exercises found based on filters
+    return [];
   }
 
-  // Filter exercises into three categories (type1, type2, type3)
+  // Filter by type
   const type1Exercises = groupExercises.filter(ex => ex.type === 'type1');
   const type2Exercises = groupExercises.filter(ex => ex.type === 'type2');
   const type3Exercises = groupExercises.filter(ex => ex.type === 'type3');
 
-  // Helper function to pick a random exercise and fetch past performance
+  // Helper to pick a random exercise and fetch past performance
   const getRandomExercise = async (arr) => {
     if (arr.length === 0) {
       return { exercise_name: "Exercise Not Available", lastPerformance: null };
     }
-
-    // Randomly pick an exercise
     const exercise = arr[Math.floor(Math.random() * arr.length)];
 
-    // Fetch all past sets for the chosen exercise for this user
-    const { data: allPastSets, error: performanceError } = await supabase
-      .from('workouts')
-      .select('weight, reps')
-      .eq('user_id', userId)
-      .eq('exercise_name', exercise.exercise_name)
-      .order('timestamp', { ascending: false });
-
-    if (performanceError) {
-      console.error("Error fetching past performance:", performanceError);
-    }
-
-    let lastPerformance = null;
-    if (allPastSets && allPastSets.length > 0) {
-      // Aggregate total weight and reps over all recorded sets
-      let totalWeight = 0;
-      let totalReps = 0;
-      let totalSets = allPastSets.length;
-
-      for (const record of allPastSets) {
-        totalWeight += record.weight * record.reps;
-        totalReps += record.reps;
-      }
-
-      // Compute averages
-      const avgWeightPerRep = totalWeight / totalReps;
-      const avgRepsPerSet = totalReps / totalSets;
-
-      lastPerformance = {
-        averageWeight: avgWeightPerRep.toFixed(1),
-        averageReps: avgRepsPerSet.toFixed(1),
-        totalSets
-      };
-    }
-
+    // Get past performance for that exercise
+    const lastPerformance = await fetchPerformanceData(userId, exercise.exercise_name);
     return { ...exercise, lastPerformance };
   };
 
-  // Fetch one random exercise from each type
+  // Fetch one random exercise of each type
   const workout = await Promise.all([
     getRandomExercise(type1Exercises),
     getRandomExercise(type2Exercises),
@@ -133,54 +131,46 @@ async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
    Routes
 ========================== */
 
-// Home page: Simple landing screen with links to login or register
 app.get('/', (req, res) => {
   res.render('index');
 });
 
-// Registration page (GET): Shows register form
+// Registration page (GET)
 app.get('/register', (req, res) => {
   res.render('register', { error: null, success: null }); 
 });
 
-// Registration page (POST): Handles new user sign-ups
+// Registration page (POST)
 app.post('/register', async (req, res) => {
   const { email, password } = req.body;
-
-  // Ensure email and password are provided
   if (!email || !password) {
     return res.status(400).render('register', { error: 'Email and password are required', success: null });
   }
 
   try {
-    // Check if user already exists
+    // Check if user exists
     const { data: existingUser, error: fetchError } = await supabase
       .from('users')
       .select('*')
       .eq('email', email);
-
     if (fetchError) throw fetchError;
 
     if (existingUser && existingUser.length > 0) {
       return res.status(400).render('register', { error: 'User already exists. Please log in.', success: null });
     }
 
-    // Hash the password for security
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert the new user
+    // Insert user
     const { data: newUser, error: insertError } = await supabase
       .from('users')
       .insert([{ email, password: hashedPassword }])
       .select();
-
     if (insertError) throw insertError;
 
     const user = newUser[0];
-    // Automatically log the user in
     req.session.user = { id: user.id, email: user.email };
     req.session.save(() => {
-      // Redirect to generate-workout page after registration
       res.redirect('/generate-workout');
     });
 
@@ -190,41 +180,35 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Login page (GET): Show login form
+// Login page (GET)
 app.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-// Login page (POST): Handle user login
+// Login page (POST)
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
-
-  // Check required fields
   if (!email || !password) {
     return res.status(400).render('login', { error: 'Email and password are required' });
   }
 
   try {
-    // Find user by email
     const { data: users, error: fetchError } = await supabase
       .from('users')
       .select('*')
       .eq('email', email);
 
     if (fetchError) throw fetchError;
-
     if (!users || users.length === 0) {
       return res.status(404).render('login', { error: 'User not found' });
     }
 
     const user = users[0];
-    // Compare hashed passwords
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       return res.status(401).render('login', { error: 'Invalid password' });
     }
 
-    // Login successful, set session
     req.session.user = { id: user.id, email: user.email };
     res.redirect('/generate-workout');
 
@@ -234,36 +218,33 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Logout user
+// Logout
 app.post('/logout', (req, res) => {
   req.session.destroy();
   res.redirect('/');
 });
 
-// Generate Workout page (GET): Shows muscle group selection and workout generation
+// Generate Workout page (GET)
 app.get('/generate-workout', isAuthenticated, (req, res) => {
   res.render('generate-workout', { 
     user: req.session.user, 
     muscleGroup: null, 
     workout: [], 
-    dumbbellOnly: false, // Default toggle state
+    dumbbellOnly: false,
     error: null 
   });
 });
 
-// Handle Workout Generation (POST): Create a new workout based on chosen muscle group and equipment preference
+// Generate Workout (POST)
 app.post('/generate-workout', isAuthenticated, async (req, res) => {
   const { muscleGroup, dumbbell_only } = req.body;
   const userId = req.session.user.id;
-
-  // Convert 'dumbbell_only' to boolean
-  const dumbbellOnly = dumbbell_only === '1' ? true : false;
+  const dumbbellOnly = (dumbbell_only === '1');
 
   try {
     const workout = await generateWorkout(userId, muscleGroup, dumbbellOnly);
     
     if (dumbbellOnly && workout.length === 0) {
-      // If dumbbell_only is selected but no exercises found
       return res.render('generate-workout', { 
         user: req.session.user, 
         muscleGroup, 
@@ -273,10 +254,9 @@ app.post('/generate-workout', isAuthenticated, async (req, res) => {
       });
     }
 
-    // Store workout and muscleGroup in session for later use (e.g., starting workout)
     req.session.workout = workout;
     req.session.muscleGroup = muscleGroup;
-    req.session.dumbbellOnly = dumbbellOnly; // Store preference
+    req.session.dumbbellOnly = dumbbellOnly;
     req.session.save(() => {
       res.render('generate-workout', { 
         user: req.session.user, 
@@ -298,11 +278,11 @@ app.post('/generate-workout', isAuthenticated, async (req, res) => {
   }
 });
 
-// Regenerate Workout: Allows user to generate a new random workout of the same muscle group
+// Regenerate Workout
 app.post('/regenerate-workout', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id;
   const muscleGroup = req.session.muscleGroup;
-  const dumbbellOnly = req.session.dumbbellOnly; // Retrieve from session
+  const dumbbellOnly = req.session.dumbbellOnly; 
 
   if (!muscleGroup) {
     return res.redirect('/generate-workout');
@@ -312,13 +292,12 @@ app.post('/regenerate-workout', isAuthenticated, async (req, res) => {
     const workout = await generateWorkout(userId, muscleGroup, dumbbellOnly);
     
     if (dumbbellOnly && workout.length === 0) {
-      // If dumbbell_only is selected but no exercises found
       return res.render('generate-workout', { 
         user: req.session.user, 
         muscleGroup, 
         workout: [], 
         dumbbellOnly,
-        error: 'No dumbbell-only exercises found for the selected muscle group. Please choose a different muscle group or disable "Dumbbell Only".'
+        error: 'No dumbbell-only exercises found for the selected muscle group.'
       });
     }
 
@@ -332,23 +311,20 @@ app.post('/regenerate-workout', isAuthenticated, async (req, res) => {
   }
 });
 
-// Start Workout: Begins the workout timer and sets current exercise index to 0
+// Start Workout
 app.post('/start-workout', isAuthenticated, (req, res) => {
   const workout = req.session.workout;
-
   if (!workout || workout.length === 0) {
-    return res.redirect('/generate-workout'); // If no workout, go back
+    return res.redirect('/generate-workout');
   }
-
-  // Render the workout-timer page with initial index 0
+  // Render workout-timer
   res.render('workout-timer', { workout, currentExerciseIndex: 0 });
 });
 
-// Save Workout Data: Save weights and reps for the completed set
+// Save Workout Data
 app.post('/save-workout', isAuthenticated, async (req, res) => {
   const { exercise_name, muscle_group, weight, reps } = req.body;
 
-  // Validate input
   if (!exercise_name || !muscle_group || typeof weight !== 'number' || typeof reps !== 'number') {
     return res.status(400).send('Invalid data');
   }
@@ -360,35 +336,49 @@ app.post('/save-workout', isAuthenticated, async (req, res) => {
         user_id: req.session.user.id,
         exercise_name,
         muscle_group,
-        weight,  
-        reps,    
+        weight,
+        reps,
         timestamp: new Date(),
       }]);
 
     if (error) throw error;
 
-    // Redirect back to generate-workout or remain on same page
-    res.redirect('/generate-workout');
+    // Instead of redirect, send a simple JSON success response
+    return res.json({ success: true });
   } catch (err) {
     console.error('Save Workout Error:', err);
     res.status(500).send('Failed to save workout');
   }
 });
 
-// Workout Complete Page: Show a celebratory screen at the end of the entire workout
+// NEW ENDPOINT: Return updated performance for an exercise (so front-end can update averages)
+app.post('/get-updated-performance', isAuthenticated, async (req, res) => {
+  const { exercise_name } = req.body;
+  if (!exercise_name) {
+    return res.status(400).json({ error: 'exercise_name is required' });
+  }
+  try {
+    const updatedPerformance = await fetchPerformanceData(req.session.user.id, exercise_name);
+    return res.json({ lastPerformance: updatedPerformance });
+  } catch (err) {
+    console.error('Error fetching updated performance:', err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Workout Complete
 app.get('/workout-complete', isAuthenticated, (req, res) => {
   res.render('workout-complete'); 
 });
 
-// Info page route
+// Info
 app.get('/info', (req, res) => {
   res.render('info');
 });
 
-// GET /analytics page
+// Analytics Page
 app.get('/analytics', isAuthenticated, async (req, res) => {
   try {
-    // Optionally: fetch a list of exercises for a dropdown
     const { data: allExercises, error } = await supabase
       .from('exercises')
       .select('*');
@@ -398,7 +388,6 @@ app.get('/analytics', isAuthenticated, async (req, res) => {
       return res.status(500).send('Error fetching exercise list');
     }
 
-    // Render analytics.ejs with a list of exercises
     res.render('analytics', { exercises: allExercises });
   } catch (err) {
     console.error('Analytics GET error:', err);
@@ -406,8 +395,7 @@ app.get('/analytics', isAuthenticated, async (req, res) => {
   }
 });
 
-// POST /analytics/data 
-// This route returns JSON data for the chosen exercise
+// Analytics Data Endpoint
 app.post('/analytics/data', isAuthenticated, async (req, res) => {
   const { exercise_name } = req.body;
   if (!exercise_name) {
@@ -415,9 +403,6 @@ app.post('/analytics/data', isAuthenticated, async (req, res) => {
   }
 
   try {
-    // Query supabase "workouts" table for all sessions with this exercise
-    // We’ll assume the 'workouts' table has columns: 
-    //   user_id, exercise_name, weight, reps, timestamp 
     const { data: workoutData, error } = await supabase
       .from('workouts')
       .select('*')
@@ -430,7 +415,6 @@ app.post('/analytics/data', isAuthenticated, async (req, res) => {
       return res.status(500).json({ error: 'Database query error' });
     }
 
-    // Aggregate data by date (or session). For simplicity, group by date (YYYY-MM-DD).
     const aggregated = {};
     workoutData.forEach((w) => {
       const dateKey = new Date(w.timestamp).toISOString().split('T')[0];
@@ -439,10 +423,9 @@ app.post('/analytics/data', isAuthenticated, async (req, res) => {
       }
       aggregated[dateKey].totalWeight += w.weight * w.reps;
       aggregated[dateKey].totalReps += w.reps;
-      aggregated[dateKey].entries += 1; // or track sets if needed
+      aggregated[dateKey].entries += 1;
     });
 
-    // Build arrays for Chart.js: labels[] (dates), data[] (ex. average weight, or total load)
     const labels = [];
     const dataAvgWeight = [];
     const dataAvgReps = [];
@@ -451,17 +434,16 @@ app.post('/analytics/data', isAuthenticated, async (req, res) => {
     Object.keys(aggregated).sort().forEach((dateKey) => {
       labels.push(dateKey);
 
-      const { totalWeight, totalReps } = aggregated[dateKey];
-      const avgWeight = totalWeight / totalReps; // if totalReps>0
-      const avgReps = totalReps / aggregated[dateKey].entries; 
-      const totalLoad = avgWeight * avgReps; // or totalWeight / aggregated[dateKey].entries
+      const { totalWeight, totalReps, entries } = aggregated[dateKey];
+      const avgWeight = totalWeight / totalReps;
+      const avgReps = totalReps / entries;
+      const totalLoad = avgWeight * avgReps;
 
       dataAvgWeight.push(+avgWeight.toFixed(1));
       dataAvgReps.push(+avgReps.toFixed(1));
       dataTotalLoad.push(+totalLoad.toFixed(1));
     });
 
-    // Return JSON with the aggregated data
     return res.json({
       labels,
       dataAvgWeight,
