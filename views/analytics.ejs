@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Analytics</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -10,9 +10,9 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 600px; /* Force 600px max */
       margin: 0 auto;
-      padding: 2rem; /* Changed from 20px to rem units */
+      padding: 2rem;
       box-sizing: border-box;
       background: #F9F8F3;
       color: #333;
@@ -21,105 +21,96 @@
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
     }
 
-    /* Containers for buttons to keep layout consistent */
     .button-form {
-      margin: 1rem 0; /* Uniform spacing for each "form" containing a button */
+      margin: 1rem 0;
       text-align: center;
     }
-
-    /* Styling for main large buttons (like "Back to Home") */
     .button-form button {
       display: block;
       width: 100%;
-      max-width: 100%; /* Changed from 200px to 100% */
-      margin: 0 auto; /* center the button horizontally */
-      padding: 0.75rem 1.25rem; /* Changed from 15px 25px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
       font-weight: 700;
-      background: #A0522D; /* Rust color default */
+      background: #A0522D;
       color: #fff;
-      border: 2px solid #8C4528; /* subtle trim */
+      border: 2px solid #8C4528;
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
       box-sizing: border-box;
     }
-
     .button-form button:hover {
-      background: #8C4528; /* Hover effect matches home page */
+      background: #8C4528;
     }
 
     select {
-      margin: 0.625rem; /* Changed from 10px to rem */
-      padding: 0.625rem 0.938rem; /* Changed from 10px 15px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      margin: 0.625rem;
+      padding: 0.625rem 0.938rem;
+      font-size: 1rem;
       border-radius: 5px;
       width: 100%;
-      max-width: 100%; /* Changed from default */
+      max-width: 100%;
       box-sizing: border-box;
     }
 
     #chart-container {
       width: 100%;
-      max-width: 100%; /* Changed from 600px to 100% */
-      margin: 1.25rem auto; /* Changed from 20px to rem */
+      max-width: 100%;
+      margin: 1.25rem auto;
       box-sizing: border-box;
     }
 
-    /* New container for the dropdown and view button inline */
     .exercise-container {
-      display: flex; /* Changed from inline-flex to flex */
-      flex-direction: column; /* Changed to column for better stacking on mobile */
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0.3125rem; /* Changed from 5px to rem */
-      margin-top: 0.625rem; /* Changed from 10px to rem */
+      gap: 0.3125rem;
+      margin-top: 0.625rem;
     }
 
-    /* Olive button styling for the "View" button */
     .olive-button {
       background-color: #556B2F;
       color: white;
-      padding: 0.75rem 0.938rem; /* Changed from 12px 15px to rem units */
-      font-size: 1.0625rem;   /* Changed from 17px to 1.0625rem */
+      padding: 0.75rem 0.938rem;
+      font-size: 1.0625rem;
       border: none;
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
       box-sizing: border-box;
-      width: 100%; /* Ensure the button takes full width within the container */
-      max-width: 150px; /* Optional: limit max-width for larger screens */
+      width: 100%;
+      max-width: 150px;
     }
-
     .olive-button:hover {
-      background-color: #3B4F1A; /* Darker olive on hover */
+      background-color: #3B4F1A;
     }
 
     @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
       .exercise-container {
-        flex-direction: row; /* Change to row on larger screens */
+        flex-direction: row;
       }
       .olive-button {
         max-width: 150px;
       }
     }
-
     @media (max-width: 600px) {
       body {
         padding: 1rem;
       }
       .exercise-container {
-        flex-direction: column; /* Ensure column on small screens */
+        flex-direction: column;
       }
       .olive-button {
-        max-width: 100%; /* Allow full width on small screens */
+        max-width: 100%;
       }
     }
   </style>
@@ -128,16 +119,13 @@
   <h1>Analytics</h1>
   <p>Select an exercise to view your progress over time.</p>
 
-  <!-- Inline container for dropdown and "View" button -->
   <div class="exercise-container">
-    <!-- Dropdown for exercises -->
     <select id="exercise-select">
       <% exercises.forEach(ex => { %>
         <option value="<%= ex.exercise_name %>"><%= ex.exercise_name %></option>
       <% }); %>
     </select>
 
-    <!-- "View" button using olive styling -->
     <button type="button" onclick="fetchAnalyticsData()" class="olive-button">View</button>
   </div>
 
@@ -145,7 +133,6 @@
     <canvas id="progressChart"></canvas>
   </div>
 
-  <!-- Back to Home button -->
   <form action="/generate-workout" method="GET" class="button-form">
     <button type="submit">Back to Home</button>
   </form>
@@ -172,8 +159,7 @@
 
     function renderChart(labels, dataAvgWeight, dataAvgReps, dataTotalLoad) {
       const ctx = document.getElementById('progressChart').getContext('2d');
-      
-      // If there's an existing chart, destroy it before creating a new one
+
       if (chartInstance) {
         chartInstance.destroy();
       }
@@ -186,7 +172,7 @@
             {
               label: 'Avg Weight (lbs)',
               data: dataAvgWeight,
-              borderColor: 'rgba(160,82,45, 1)', // rust color
+              borderColor: 'rgba(160,82,45, 1)',
               backgroundColor: 'rgba(160,82,45, 0.2)',
               fill: true,
               tension: 0.1
@@ -194,7 +180,7 @@
             {
               label: 'Avg Reps',
               data: dataAvgReps,
-              borderColor: 'rgba(85,107,47,1)', // olive color
+              borderColor: 'rgba(85,107,47,1)',
               backgroundColor: 'rgba(85,107,47,0.2)',
               fill: true,
               tension: 0.1
@@ -202,7 +188,7 @@
             {
               label: 'Total Load (AvgWeight * AvgReps)',
               data: dataTotalLoad,
-              borderColor: 'rgba(70,130,180,1)', // steelblue
+              borderColor: 'rgba(70,130,180,1)',
               backgroundColor: 'rgba(70,130,180,0.2)',
               fill: true,
               tension: 0.1
@@ -219,6 +205,5 @@
       });
     }
   </script>
-
 </body>
 </html>

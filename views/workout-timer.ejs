@@ -10,31 +10,32 @@
   <style>
     /* 
       Mobile-first single-column, cohesive design for timers and input form. 
-      Timers, forms, and containers adjust to screen size.
+      Timers, forms, and containers adjust to screen size, 
+      capped at 600px for a consistent, centered UI.
     */
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%;
+      max-width: 600px; /* <-- ensures the page content doesn’t exceed 600px wide */
       margin: 0 auto;
-      padding: 2rem; /* Scalable padding */
+      padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; 
-      font-size: 1.5rem; 
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
     }
 
     .timer-container {
-      display: block; 
-      margin: 0 auto 1.25rem auto; 
+      display: block;
+      margin: 0 auto 1.25rem auto;
       background: #ffc87f;
-      padding: 1rem; 
+      padding: 1rem;
       border-radius: 5px;
       border: 1px solid #EEE;
       width: 100%;
@@ -45,14 +46,15 @@
       box-sizing: border-box;
     }
 
+    /* Adjusted <h3> margins within #prep-timer */
     #prep-timer h3 {
-      margin-top: 0.25rem; 
-      margin-bottom: 0.5rem; 
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
     }
 
     #exercise-name {
       display: none;
-      margin: 0 auto 1rem auto; 
+      margin: 0 auto 1rem auto;
       width: 100%;
       max-width: 300px;
       font-weight: bold;
@@ -60,13 +62,14 @@
       box-sizing: border-box;
     }
 
+    /* Set Data form */
     #input-form {
       display: none;
-      margin: 1.25rem auto 0 auto; 
+      margin: 1.25rem auto 0 auto;
       width: 100%;
       max-width: 300px;
       background: #FFF;
-      padding: 1rem; 
+      padding: 1rem;
       border-radius: 5px;
       border: 1px solid #EEE;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -75,10 +78,10 @@
     }
     #input-form h3 {
       margin-top: 0;
-      margin-bottom: 0.9375rem; 
-      font-size: 1.125rem; 
+      margin-bottom: 0.9375rem;
+      font-size: 1.125rem;
       color: #556B2F;
-      text-align: center; 
+      text-align: center;
     }
     .input-row {
       margin-bottom: 1rem;
@@ -87,15 +90,15 @@
       display: block;
       width: 100%;
       font-weight: 600;
-      font-size: 1rem; 
+      font-size: 1rem;
       color: #333;
       margin-bottom: 0.5rem;
     }
     .input-row input[type="number"] {
-      width: 100%; 
-      font-size: 1rem; 
-      padding: 0.5rem; 
-      margin-bottom: 0.5rem; 
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
       border: 1px solid #CCC;
       border-radius: 3px;
       box-sizing: border-box;
@@ -104,7 +107,8 @@
     #input-form button {
       display: block;
       width: 100%;
-      max-width: 100%;
+      /* up to 600px if you like, or just keep 100%: 
+         max-width: 600px; */
       margin: 0.9375rem auto 0 auto;
       padding: 0.75rem 1.25rem;
       font-size: 1rem;
@@ -129,11 +133,12 @@
     }
 
     p, li {
-      font-size: 1rem; 
+      font-size: 1rem;
       line-height: 1.5;
       color: #333;
     }
 
+    /* "I'm Ready!" button */
     #ready-button {
       display: block;
       margin: 1.25rem auto 0 auto;
@@ -229,12 +234,12 @@
     const workout = JSON.parse('<%- JSON.stringify(workout) %>');
 
     const EXERCISE_INFO = [
-      { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 }, 
+      { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 },
       { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
-      { sets: 1, exerciseDuration: 90, intraRest: 0,  postExerciseRest: 0 } 
+      { sets: 1, exerciseDuration: 90, intraRest: 0, postExerciseRest: 0 }
     ];
 
-    let currentExerciseIndex = 0; 
+    let currentExerciseIndex = 0;
     let currentSet = 1;
     let timeRemaining;
     let timerInterval;
@@ -266,6 +271,7 @@
       window.location.href = '/generate-workout';
     }
 
+    // Handle "I'm Ready!" button click
     function readyButtonClicked() {
       silentAudio.play().then(() => {
         document.getElementById('ready-button').style.display = 'none';
@@ -282,7 +288,6 @@
         window.location.href = '/generate-workout';
         return;
       }
-      // Update the exercise details
       prepTimerEl.querySelector('h2').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
       prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(currentExercise);
 
@@ -303,7 +308,7 @@
       }, 1000);
     }
 
-    // Helper to return the text for average performance
+    // Helper: return average performance text
     function fetchPreviousPerformance(exercise) {
       if (exercise.lastPerformance) {
         return `Avg Weight: ${exercise.lastPerformance.averageWeight} lbs, Avg Reps: ${exercise.lastPerformance.averageReps}`;
@@ -327,7 +332,7 @@
           ${fetchPreviousPerformance(exercise)}
         </span>
       `;
-      
+
       document.getElementById('timer').style.display = 'block';
 
       timeRemaining = exerciseDuration;
@@ -359,6 +364,7 @@
     }
 
     function showInputForm() {
+      // Show the set data form
       inputFormEl.style.display = 'block';
       weightInputEl.value = '';
       repsInputEl.value = '';
@@ -366,7 +372,7 @@
       weightInputEl.focus();
     }
 
-    // Submit set data, then fetch updated performance for real-time update
+    // Submit set data => fetch updated performance => next set or next exercise
     async function submitSetData() {
       const weight = Number(weightInputEl.value);
       const reps = Number(repsInputEl.value);
@@ -395,7 +401,7 @@
           return;
         }
 
-        // 2) Fetch the updated performance for this exercise
+        // 2) Fetch updated performance
         const perfResp = await fetch('/get-updated-performance', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -406,11 +412,8 @@
           return;
         }
         const perfData = await perfResp.json();
-
-        // 3) Update our local "workout" array
         workout[currentExerciseIndex].lastPerformance = perfData.lastPerformance;
 
-        // Show feedback, proceed to next
         feedbackMessageEl.innerText = 'Data saved!';
         setTimeout(() => {
           feedbackMessageEl.innerText = '';
@@ -428,7 +431,6 @@
       inputFormEl.style.display = 'none';
       document.getElementById('timer').style.display = 'none';
 
-      // If more sets remain
       if (currentSet < sets) {
         currentSet++;
         startRestTimer(intraRest);
@@ -444,7 +446,6 @@
       }
     }
 
-    // Show the upcoming set number + updated stats on the rest timer
     function startRestTimer(duration) {
       const exercise = workout[currentExerciseIndex];
       const { sets } = EXERCISE_INFO[currentExerciseIndex];

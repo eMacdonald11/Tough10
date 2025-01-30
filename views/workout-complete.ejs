@@ -2,71 +2,59 @@
 <html lang="en">
 <head>
   <title>Workout Completed</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
-  <!-- Use the same font and styling approach -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /*
-      workout-complete.ejs:
-      Displays a celebratory message after finishing the entire workout.
-      Consistent styling with earthy tones and clean UI.
-    */
-
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 600px; /* Force 600px max */
       margin: 0 auto;
-      padding: 2rem; /* Changed from 20px to rem units */
+      padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from default */
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
     }
 
     p {
-      margin: 1.25rem 0; /* Changed from 20px to rem */
-      font-size: 1.125rem; /* Changed from 18px to rem */
+      margin: 1.25rem 0;
+      font-size: 1.125rem;
       line-height: 1.4;
     }
 
-    /* Add some celebratory emoji for now:
-       Later, consider adding subtle confetti animations using CSS or a small GIF.
-    */
     .celebration {
-      font-size: 2.5rem; /* Changed from 40px to rem units */
-      margin: 1.25rem 0; /* Changed from 20px to rem */
+      font-size: 2.5rem;
+      margin: 1.25rem 0;
     }
 
     button {
-      padding: 0.625rem 1.25rem; /* Changed from 10px 20px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      background: #A0522D; /* Rust color */
+      padding: 0.625rem 1.25rem;
+      font-size: 1rem;
+      background: #A0522D;
       color: #fff;
       border: none;
-      border-radius: 0.3125rem; /* Changed from 5px to rem units */
+      border-radius: 0.3125rem;
       cursor: pointer;
-      margin: 1.25rem 0.3125rem; /* Changed from 20px 5px to rem units */
+      margin: 1.25rem 0.3125rem;
       transition: background 0.3s ease;
       box-sizing: border-box;
       width: 100%;
-      max-width: 300px; /* Optional: limit max-width on larger screens */
+      max-width: 300px;
     }
-
     button:hover {
       background: #8C4528;
     }
 
-    /* Container to center the button */
     .button-container {
       display: flex;
       justify-content: center;
@@ -75,39 +63,32 @@
     }
 
     @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
       button {
-        width: auto; /* Allow button to size based on content on larger screens */
+        width: auto;
       }
     }
-
     @media (max-width: 600px) {
       body {
         padding: 1rem;
       }
       button {
-        max-width: 100%; /* Allow button to take full width on small screens */
+        max-width: 100%;
       }
       .celebration {
-        font-size: 2rem; /* Slightly smaller on very small screens */
+        font-size: 2rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Workout Complete Page:
-       Informs the user they have finished the entire workout, offers celebratory emojis,
-       and a button to return to the workout generation screen.
-  -->
   <h1>Workout Complete</h1>
 
   <div class="celebration">🎉🎉🎉</div>
   <p>You made it.</p>
   
-  <!-- Button to return to workout generation page -->
   <div class="button-container">
     <form action="/generate-workout" method="GET">
       <button type="submit">Return Home</button>

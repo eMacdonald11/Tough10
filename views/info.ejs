@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Workout Info</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -12,54 +12,51 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 600px; /* Force 600px max */
       margin: 0 auto;
-      padding: 2rem; /* Changed from 20px to rem units */
+      padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from default */
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
     }
 
     ul {
       list-style-type: none;
       padding: 0;
-      margin: 1.25rem 0; /* Changed from 20px to rem units */
+      margin: 1.25rem 0;
     }
 
     li {
-      margin: 0.625rem 0; /* Changed from 10px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      margin: 0.625rem 0;
+      font-size: 1rem;
     }
 
     button {
-      padding: 0.625rem 1.25rem; /* Changed from 15px 25px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      background: #A0522D; /* Rust color */
+      padding: 0.625rem 1.25rem;
+      font-size: 1rem;
+      background: #A0522D;
       color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
-      margin: 1.25rem 0.3125rem; /* Changed from 15px 5px to rem units */
+      margin: 1.25rem 0.3125rem;
       transition: background 0.3s ease;
       box-sizing: border-box;
     }
-
     button:hover {
       background: #8C4528;
     }
 
     @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
     }
-
     @media (max-width: 600px) {
       body {
         padding: 1rem;
@@ -71,17 +68,13 @@
   </style>
 </head>
 <body>
-  <!-- Info page: Explains the workout structure. 
-       This page is simple and mobile-friendly. -->
-
   <h1>Tough10 Overview</h1>
-  <p>This application has been designed to build an excellent psyique in as little time as possible.</p>
+  <p>This application has been designed to build an excellent physique in as little time as possible.</p>
   <ul>
-    <li>Inspired by natural bodybuilding techniques, it focuses on controlled, form-perfect movements with lighter weights to reduce joint strain and injury. Embrace the 4-1-1 tempo (4s lower, 1s pause, 1s lift) to push muscles to their limits, while short breaks and exercise variety ensure you never hit a plateau.</li>
+    <li>Inspired by natural bodybuilding techniques, it focuses on controlled movements with lighter weights to reduce joint strain. Embrace the 4-1-1 tempo. Short breaks and variety ensure no plateau.</li>
     <li>Don’t underestimate the burn – a pair of 20lb dumbbells will leave you sweating!</li>
   </ul>
 
-  <!-- Button to go back to generate-workout -->
   <form action="/generate-workout" method="GET">
     <button type="submit">Back</button>
   </form>

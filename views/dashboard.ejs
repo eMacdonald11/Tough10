@@ -2,59 +2,51 @@
 <html lang="en">
 <head>
   <title>Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
-  <!-- Import Google Font for a clean look -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* 
-      Styling for the Dashboard page.
-      Use the same earthy color scheme and single-column layout.
-    */
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
       margin: 0;
-      padding: 2rem; /* Changed from 20px to rem units */
-      background: #F9F8F3; /* Off-white background */
+      padding: 2rem;
+      background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 600px; /* Force 600px max */
       margin: 0 auto;
       box-sizing: border-box;
       overflow-x: hidden;
     }
 
     h1 {
-      color: #556B2F; /* Olive green heading */
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from default */
+      color: #556B2F;
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
     }
 
     a {
       display: inline-block;
-      margin: 0.625rem 0.3125rem; /* Changed from 10px 5px to rem units */
-      padding: 0.625rem 1.25rem; /* Changed from 10px 20px to rem units */
-      background: #A0522D; /* Rust color for links styled as buttons */
+      margin: 0.625rem 0.3125rem;
+      padding: 0.625rem 1.25rem;
+      background: #A0522D;
       color: #fff;
       text-decoration: none;
       border-radius: 5px;
       transition: background 0.3s ease;
-      font-size: 1rem; /* Added font size */
+      font-size: 1rem;
       box-sizing: border-box;
     }
-
     a:hover {
-      background: #8C4528; /* Darker rust on hover */
+      background: #8C4528;
     }
 
     @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
     }
-
     @media (max-width: 600px) {
       body {
         padding: 1rem;
@@ -66,15 +58,8 @@
   </style>
 </head>
 <body>
-  <!-- Dashboard page:
-       Displays the user's email (passed in from the server)
-       and provides navigation to generate a workout or logout.
-  -->
-
   <h1>Welcome, <%= email %></h1>
-  <!-- Link to generate a workout -->
   <a href="/generate-workout">Generate a Workout</a><br><br>
-  <!-- Link to logout of the application -->
   <a href="/logout">Logout</a>
 </body>
 </html>

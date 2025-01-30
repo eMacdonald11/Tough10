@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Register</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Added viewport meta tag -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -12,61 +12,61 @@
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Changed from 600px to 100% */
+      max-width: 600px; /* Force 600px max */
       margin: 0 auto;
-      padding: 2rem; /* Changed from 20px to rem units */
+      padding: 2rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Changed from 20px to rem */
-      font-size: 1.5rem; /* Changed from 24px to 1.5rem */
+      margin-bottom: 1.25rem;
+      font-size: 1.5rem;
     }
     .error {
       color: red;
-      font-size: 0.875rem; /* Changed from default */
+      font-size: 0.875rem;
       margin-bottom: 1rem;
     }
     .success {
       color: green;
-      font-size: 0.875rem; /* Changed from default */
+      font-size: 0.875rem;
       margin-bottom: 1rem;
     }
     form {
-      margin: 1.25rem 0; /* Changed from 20px to rem units */
+      margin: 1.25rem 0;
     }
     label {
       display: block;
-      margin: 0.625rem auto 0.3125rem; /* Changed from 10px 0 5px to rem units */
+      margin: 0.625rem auto 0.3125rem;
       font-weight: 600;
       text-align: left;
-      max-width: 100%; /* Changed from 300px to 100% */
+      max-width: 100%;
       width: 100%;
-      padding: 0 1rem; /* Added padding for better alignment */
+      padding: 0 1rem;
       box-sizing: border-box;
     }
     input[type="email"], input[type="password"] {
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
-      padding: 0.625rem; /* Changed from 10px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
+      max-width: 100%;
+      padding: 0.625rem;
+      font-size: 1rem;
       border: 1px solid #CCC;
       border-radius: 5px;
-      margin-bottom: 0.9375rem; /* Changed from 15px to rem units */
+      margin-bottom: 0.9375rem;
       box-sizing: border-box;
     }
     button {
       display: block;
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
-      margin: 0.625rem auto; /* Changed from 10px to rem units */
-      padding: 0.9375rem 1.5625rem; /* Changed from 15px 25px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      font-weight: 700; /* Bold */
+      max-width: 100%;
+      margin: 0.625rem auto;
+      padding: 0.9375rem 1.5625rem;
+      font-size: 1rem;
+      font-weight: 700;
       background: #A0522D;
       color: #fff;
-      border: 2px solid #8C4528; /* Slight trim matching color scheme */
+      border: 2px solid #8C4528;
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
@@ -76,38 +76,31 @@
       background: #8C4528;
     }
     p {
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      margin: 0.625rem 0; /* Changed from 10px to rem units */
+      font-size: 1rem;
+      margin: 0.625rem 0;
     }
     a {
       color: #556B2F;
       text-decoration: none;
       font-weight: 600;
-      font-size: 1rem; /* Changed from default */
+      font-size: 1rem;
     }
     a:hover {
       text-decoration: underline;
     }
     @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
     }
-
     @media (max-width: 600px) {
       body {
         padding: 1rem;
-      }
-      label, input, button {
-        max-width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Registration page: Single column, compressed text, bold buttons. -->
-
   <h1>Register</h1>
 
   <% if (error) { %>
