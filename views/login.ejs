@@ -27,11 +27,18 @@
       box-sizing: border-box;
     }
 
-    h1 {
-      color: #556B2F;
-      margin-bottom: 1.25rem;
-      font-size: 1.5rem;
+    /* Adjusted to reduce vertical spacing and enlarge logo width */
+    .logo-container {
+      margin: 0.25rem auto; /* Less whitespace above/below */
+      padding: 0;
     }
+    .logo-container img {
+      max-width: 190px;   /* ~25% wider than 150px */
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
     .error {
       color: red;
       font-size: 0.875rem;
@@ -87,6 +94,7 @@
     a:hover {
       text-decoration: underline;
     }
+
     @media (max-width: 600px) {
       body {
         padding: 1rem;
@@ -96,7 +104,9 @@
 </head>
 <body>
   <div class="container">
-    <h1>Login</h1>
+    <div class="logo-container">
+      <img src="/images/TOUGH10_logo.png" alt="TOUGH10 Logo" />
+    </div>
 
     <% if (error) { %>
       <p class="error"><%= error %></p>

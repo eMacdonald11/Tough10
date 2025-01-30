@@ -7,11 +7,12 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
     /*
-      Landing page with an outer container of 650px
-      Body = slightly darker (#ECE7D8)
-      .container = #F9F8F3
+      Landing page with an outer container of 650px.
+      Body = slightly darker (#ECE7D8).
+      .container = #F9F8F3.
     */
     body {
       font-family: 'Open Sans', sans-serif;
@@ -33,10 +34,16 @@
       box-sizing: border-box;
     }
 
-    h1 {
-      color: #556B2F;
-      margin-bottom: 1.25rem;
-      font-size: 2.5rem;
+    /* Logo container styling similar to login page */
+    .logo-container {
+      margin: 0.25rem auto; /* minimal vertical spacing */
+      padding: 0;
+    }
+    .logo-container img {
+      max-width: 190px;   /* 25% wider than 150px */
+      height: auto;
+      display: block;
+      margin: 0 auto;
     }
 
     a {
@@ -64,11 +71,17 @@
 </head>
 <body>
   <div class="container">
-    <h1>TOUGH10</h1>
+
+    <!-- Replace text heading with your logo -->
+    <div class="logo-container">
+      <img src="/images/TOUGH10_logo.png" alt="TOUGH10 Logo" />
+    </div>
+    <!-- End of logo container -->
 
     <!-- Links to login or register -->
     <a href="/login" style="display: block; margin: 0.625rem auto;">Login</a>
     <a href="/register" style="display: block; margin: 0.625rem auto;">Register</a>
+
   </div>
 </body>
 </html>
