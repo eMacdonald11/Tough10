@@ -2,82 +2,89 @@
 <html lang="en">
 <head>
   <title>Workout Preview</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
-  <!-- Google Font and styling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /*
-      Workout preview page:
-      Lists out the exercises chosen for the workout and allows
-      user to regenerate or start the workout.
-    */
-
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
       background: #F9F8F3;
       color: #333;
-      max-width: 100%; /* Allows the container to adapt to screen width */
+      max-width: 100%; 
       margin: 0 auto;
-      padding: 2rem; /* Scalable padding */
+      padding: 2rem; 
       box-sizing: border-box;
       overflow-x: hidden; 
     }
-
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; /* Scalable margin */
-      font-size: 1.5rem; /* Scalable font size */
+      margin-bottom: 1.25rem; 
+      font-size: 1.5rem; 
     }
 
     ul {
       list-style-type: none;
       padding: 0;
-      margin: 1.25rem 0; /* Changed from 20px to rem units */
+      margin: 1.25rem 0; 
     }
 
     li {
-      margin: 0.625rem 0; /* Changed from 10px to rem units */
+      margin: 0.625rem 0;
       background: #FFF7F0;
-      padding: 0.625rem; /* Changed from 10px to rem units */
+      padding: 0.625rem; 
       border: 1px solid #EEE;
       border-radius: 5px;
       width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
+      max-width: 100%;
       box-sizing: border-box;
       text-align: left;
+      /* FLEX to position the 🔄 button on the right */
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
     strong {
       display: block;
-      margin-bottom: 0.3125rem; /* Changed from 5px to rem */
-      font-size: 1.125rem; /* Changed from default */
+      margin-bottom: 0.3125rem; 
+      font-size: 1.125rem; 
     }
-
     p {
-      margin: 0.3125rem 0; /* Changed from 5px to rem */
-      font-size: 1rem; /* Changed from default */
+      margin: 0.3125rem 0; 
+      font-size: 1rem; 
     }
 
-    /* Button Styling */
+    .swap-form {
+      margin-left: 1rem;
+    }
+    .swap-form button {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .swap-form button:hover {
+      transform: scale(1.2);
+    }
+
     .button-form {
-      margin: 1rem 0; /* uniform vertical spacing for each form */
+      margin: 1rem 0;
       text-align: center;
     }
     .button-form button {
       display: block;
       width: 100%;
-      max-width: 100%; /* Ensures button adapts to container width */
-      margin: 0 auto; /* center horizontally */
-      padding: 0.75rem 1.25rem; /* Scalable padding */
-      font-size: 1rem; /* Scalable font size */
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
       font-weight: 700;
-      background: #A0522D; /* Rust color by default */
+      background: #A0522D; 
       color: #fff;
-      border: 2px solid #8C4528; /* subtle trim color */
+      border: 2px solid #8C4528; 
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
@@ -87,7 +94,6 @@
       background: #8C4528;
     }
 
-    /* "Start Workout" button special style in olive green */
     .start-workout-button {
       background: #556B2F !important;
       border-color: #3F4E24 !important;
@@ -96,42 +102,16 @@
       background: #3F4E24 !important;
     }
 
-    select {
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      padding: 0.625rem; /* Changed from 10px to rem units */
-      border-radius: 5px;
-      margin: 1rem 0;
-      width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
-      box-sizing: border-box;
-    }
-
-    .workout-item {
-      margin-bottom: 1.25rem; /* Changed from 20px to rem units */
-      font-size: 1rem; /* Changed from 16px to 1rem */
-      background: #FFF7F0;
-      padding: 0.625rem; /* Changed from 10px to rem units */
-      border: 1px solid #EEE;
-      border-radius: 5px;
-      text-align: left;
-      width: 100%;
-      max-width: 100%; /* Changed from 300px to 100% */
-      box-sizing: border-box;
-      margin: 0.625rem auto; /* Changed from 10px auto to rem units */
-    }
-
     @media (min-width: 601px) {
-      /* Adjust styles for larger screens if needed */
       body {
         padding: 2rem;
       }
     }
-
     @media (max-width: 600px) {
       body {
         padding: 1rem;
       }
-      select, .button-form button {
+      .button-form button {
         max-width: 100%;
       }
     }
@@ -140,66 +120,56 @@
 <body>
   <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
 
-  <!-- Muscle Group Selection Form -->
-  <form action="/generate-workout" method="POST" class="button-form">
-    <p style="font-weight: 600;">Area of Focus:</p>
-    <select name="muscleGroup" required>
-      <option value="legs">Legs</option>
-      <option value="shouldersAndBack">Shoulders and Back</option>
-      <option value="chestArmsAndAbs">Chest, Arms, and Abs</option>
-    </select>
-    <button type="submit">Generate Workout</button>
-  </form>
-
   <% if (workout && workout.length > 0) { %>
     <ul>
       <% workout.forEach((exercise, index) => { %>
         <li>
-          <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong>
-          <% if (exercise.lastPerformance) { %>
-            <p>Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
-            Avg Reps: <%= exercise.lastPerformance.averageReps %></p>
-          <% } else { %>
-            <p>No previous performance data</p>
-          <% } %>
+          <div>
+            <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong>
+            <% if (exercise.lastPerformance) { %>
+              <p>Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
+                 Avg Reps: <%= exercise.lastPerformance.averageReps %></p>
+            <% } else { %>
+              <p>No previous performance data</p>
+            <% } %>
+          </div>
+          <!-- 🔄 Swap button -->
+          <form action="/swap-exercise" method="POST" class="swap-form">
+            <input type="hidden" name="exerciseIndex" value="<%= index %>">
+            <input type="hidden" name="sourcePage" value="preview">
+            <button type="submit" title="Swap this exercise">🔄</button>
+          </form>
         </li>
       <% }); %>
     </ul>
-    <!-- “Start Workout” Button in olive green with audio unlock -->
+
+    <!-- Start Workout -->
     <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
       <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
       <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
     </form>
   <% } %>
 
-  <!-- NEW: "Reporting" button => placed above the Info button, matching color & spacing -->
+  <!-- Reporting -->
   <form action="/analytics" method="GET" class="button-form">
     <button type="submit">Reporting</button>
   </form>
 
-  <!-- Info & Logout Buttons below the Reporting button -->
+  <!-- Info & Logout -->
   <form action="/info" method="GET" class="button-form">
     <button type="submit">Info</button>
   </form>
-
   <form action="/logout" method="POST" class="button-form">
     <button type="submit">Logout</button>
   </form>
 
-  <!-- Hidden Silent Audio for Unlocking Audio Context -->
+  <!-- Hidden silent audio -->
   <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
-  <!-- 
-    Note: Ensure you have a `silent.mp3` file in your `/public/audio/` directory.
-    This file should be a very short silent audio clip.
-  -->
 
   <script>
-    // Function to handle Start Workout button click
     function startWorkout() {
       const silentAudio = document.getElementById('silent-audio');
       silentAudio.play().then(() => {
-        // Audio context unlocked
-        // Submit the form to start the workout
         document.getElementById('start-workout-form').submit();
       }).catch((error) => {
         console.error('Audio unlock failed:', error);

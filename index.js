@@ -77,7 +77,51 @@ async function fetchPerformanceData(userId, exerciseName) {
   };
 }
 
-// Function to generate a random workout for a given muscle group + equipment
+// Helper: Return "type1", "type2", or "type3" for the given exerciseIndex
+// (You already have a 3-exercise workout: indexes 0->type1, 1->type2, 2->type3)
+function getTypeForIndex(index) {
+  if (index === 0) return 'type1';
+  if (index === 1) return 'type2';
+  return 'type3'; 
+}
+
+// Fetch a single random exercise of the given 'type' from the DB
+// that matches muscleGroup + optional dumbbellOnly
+async function getRandomExerciseOfType(userId, muscleGroup, dumbbellOnly, type) {
+  // Grab all exercises for that muscleGroup
+  let query = supabase
+    .from('exercises')
+    .select('*')
+    .eq('muscle_group', muscleGroup);
+
+  // If dumbbellOnly is true, filter further
+  if (dumbbellOnly) {
+    query = query.eq('dumbbell_only', true);
+  }
+
+  const { data: groupExercises, error } = await query;
+  if (error) {
+    console.error("Error fetching exercises for swap:", error);
+    return { exercise_name: "Exercise Not Available", lastPerformance: null, type };
+  }
+  if (!groupExercises || groupExercises.length === 0) {
+    return { exercise_name: "Exercise Not Available", lastPerformance: null, type };
+  }
+
+  // Filter by the exercise's type property
+  const typedExercises = groupExercises.filter(ex => ex.type === type);
+  if (typedExercises.length === 0) {
+    // no exercises of that type
+    return { exercise_name: "Exercise Not Available", lastPerformance: null, type };
+  }
+  // Random pick
+  const exercise = typedExercises[Math.floor(Math.random() * typedExercises.length)];
+  // Get last performance
+  const lastPerformance = await fetchPerformanceData(userId, exercise.exercise_name);
+  return { ...exercise, lastPerformance };
+}
+
+// Full random generation of 3-exercise workout
 async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
   // Build the query
   let query = supabase
@@ -105,25 +149,22 @@ async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
   const type2Exercises = groupExercises.filter(ex => ex.type === 'type2');
   const type3Exercises = groupExercises.filter(ex => ex.type === 'type3');
 
-  // Helper to pick a random exercise and fetch past performance
-  const getRandomExercise = async (arr) => {
+  // Helper to pick a random exercise + fetch performance
+  const pickRandom = async (arr) => {
     if (arr.length === 0) {
       return { exercise_name: "Exercise Not Available", lastPerformance: null };
     }
-    const exercise = arr[Math.floor(Math.random() * arr.length)];
-
-    // Get past performance for that exercise
-    const lastPerformance = await fetchPerformanceData(userId, exercise.exercise_name);
-    return { ...exercise, lastPerformance };
+    const ex = arr[Math.floor(Math.random() * arr.length)];
+    const perf = await fetchPerformanceData(userId, ex.exercise_name);
+    return { ...ex, lastPerformance: perf };
   };
 
-  // Fetch one random exercise of each type
+  // Build a 3-exercise plan: (type1, type2, type3)
   const workout = await Promise.all([
-    getRandomExercise(type1Exercises),
-    getRandomExercise(type2Exercises),
-    getRandomExercise(type3Exercises),
+    pickRandom(type1Exercises),
+    pickRandom(type2Exercises),
+    pickRandom(type3Exercises),
   ]);
-
   return workout;
 }
 
@@ -278,7 +319,7 @@ app.post('/generate-workout', isAuthenticated, async (req, res) => {
   }
 });
 
-// Regenerate Workout
+// Regenerate entire Workout
 app.post('/regenerate-workout', isAuthenticated, async (req, res) => {
   const userId = req.session.user.id;
   const muscleGroup = req.session.muscleGroup;
@@ -303,11 +344,72 @@ app.post('/regenerate-workout', isAuthenticated, async (req, res) => {
 
     req.session.workout = workout;
     req.session.save(() => {
-      res.render('workout', { workout, muscleGroup });
+      // By default, we show "workout.ejs"
+      res.render('workout', { 
+        user: req.session.user,
+        workout, 
+        muscleGroup 
+      });
     });
   } catch (err) {
     console.error('Workout Regeneration Error:', err.message);
     res.status(500).send('Failed to regenerate workout');
+  }
+});
+
+// NEW: Swap out an individual exercise
+app.post('/swap-exercise', isAuthenticated, async (req, res) => {
+  try {
+    const userId = req.session.user.id;
+    const muscleGroup = req.session.muscleGroup;
+    const dumbbellOnly = req.session.dumbbellOnly;
+    const { exerciseIndex, sourcePage } = req.body; // sourcePage: 'generate' or 'preview'
+
+    if (!req.session.workout) {
+      return res.redirect('/generate-workout');
+    }
+    const index = parseInt(exerciseIndex, 10);
+    if (index < 0 || index > 2) {
+      return res.redirect('/generate-workout');
+    }
+
+    // Determine which type we are replacing
+    // If the existing exercise has .type set in DB, we use that. Otherwise, fallback:
+    let exerciseType;
+    if (req.session.workout[index]?.type) {
+      exerciseType = req.session.workout[index].type;
+    } else {
+      exerciseType = getTypeForIndex(index);
+    }
+
+    // Grab a new random exercise of the same type
+    const newExercise = await getRandomExerciseOfType(userId, muscleGroup, dumbbellOnly, exerciseType);
+
+    // Swap in the session
+    req.session.workout[index] = newExercise;
+    req.session.save(() => {
+      // Re-render whichever page we came from
+      if (sourcePage === 'preview') {
+        // user was on "workout.ejs"
+        return res.render('workout', {
+          user: req.session.user,
+          workout: req.session.workout,
+          muscleGroup
+        });
+      } else {
+        // default: user was on "generate-workout.ejs"
+        return res.render('generate-workout', {
+          user: req.session.user,
+          muscleGroup,
+          workout: req.session.workout,
+          dumbbellOnly,
+          error: null
+        });
+      }
+    });
+  } catch (err) {
+    console.error('Error swapping exercise:', err);
+    res.redirect('/generate-workout');
   }
 });
 
@@ -342,8 +444,6 @@ app.post('/save-workout', isAuthenticated, async (req, res) => {
       }]);
 
     if (error) throw error;
-
-    // Instead of redirect, send a simple JSON success response
     return res.json({ success: true });
   } catch (err) {
     console.error('Save Workout Error:', err);
@@ -351,7 +451,7 @@ app.post('/save-workout', isAuthenticated, async (req, res) => {
   }
 });
 
-// NEW ENDPOINT: Return updated performance for an exercise (so front-end can update averages)
+// Return updated performance for an exercise
 app.post('/get-updated-performance', isAuthenticated, async (req, res) => {
   const { exercise_name } = req.body;
   if (!exercise_name) {
