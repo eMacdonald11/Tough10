@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <title>Generate Workout</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
@@ -11,302 +11,396 @@
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #ECE7D8; /* Darker outside */
+      background: #ECE7D8;
       color: #333;
       margin: 0;
-      padding: 2rem;
+      padding: 1rem;
       box-sizing: border-box;
       overflow-x: hidden;
     }
+
     .container {
-      background: #F9F8F3; /* Lighter inside */
+      background: #F9F8F3;
       max-width: 650px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1rem;
       border-radius: 10px;
       border: 1px solid #DDD;
       box-sizing: border-box;
     }
 
-    h1 {
-      color: #556B2F;
-      margin-bottom: 1.25rem;
-      font-size: 1.5rem;
-    }
-
-    .button-form {
-      margin: 1rem 0; 
-      text-align: center;
-    }
-    .button-form button {
-      display: block;
-      width: 100%;
-      max-width: 100%; 
-      margin: 0.5rem auto; 
-      padding: 0.75rem 1.25rem; 
-      font-size: 1rem;
-      font-weight: 700;
-      background: #A0522D; 
-      color: #fff;
-      border: 2px solid #8C4528;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
-      box-sizing: border-box;
-    }
-    .button-form button:hover {
-      background: #8C4528;
-      transform: translateY(-2px);
-    }
-
-    .start-workout-button {
-      background: #556B2F !important;
-      border-color: #3F4E24 !important;
-    }
-    .start-workout-button:hover {
-      background: #3F4E24 !important;
-      transform: translateY(-2px);
-    }
-
-    select {
-      font-size: 1rem;
-      padding: 0.625rem;
-      border-radius: 5px;
-      margin: 1rem 0;
-      width: 100%;
-      max-width: 100%; 
-      box-sizing: border-box;
-      border: 1px solid #CCC;
-      transition: border-color 0.3s ease;
-    }
-    select:focus {
-      border-color: #556B2F;
-      outline: none;
-    }
-
-    ul {
-      list-style-type: none;
-      padding: 0;
-      margin: 1.25rem 0; 
-    }
-
-    .workout-item {
-      margin-bottom: 1.25rem;
-      font-size: 1rem;
-      background: #FFF7F0;
-      padding: 0.625rem; 
-      border: 1px solid #EEE;
-      border-radius: 5px;
-      text-align: left;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      margin: 0.625rem auto;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      transition: transform 0.2s ease;
+    /* 1) Muscle Group Cards */
+    .muscle-groups {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 1rem;
+      gap: 8px;
     }
-    .workout-item:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-
-    .item-info {
+    .muscle-card {
       flex: 1;
-      padding-right: 1rem;
-    }
-
-    .swap-form {
-      margin-left: 1rem;
-    }
-    .swap-form button {
-      background: none;
-      border: none;
-      font-size: 1.25rem; 
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .swap-form button:hover {
-      transform: scale(1.2);
-    }
-
-    .toggle-container {
+      height: 90px;
+      background: #fff;
+      border: 2px solid #AAA;
+      border-radius: 8px;
       display: flex;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
-      margin: 1.5rem 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+      transition: background 0.3s ease, border-color 0.3s ease;
+      margin: 0; /* ensures no extra spacing around the form */
     }
-    .switch {
-      position: relative;
+    .muscle-card:hover {
+      background: #f0ebeb;
+      border-color: #888;
+    }
+    .muscle-card.active {
+      background: #ffc87f;
+      border-color: #f9b752;
+    }
+    .emoji {
+      font-size: 1.5rem;
+      margin-bottom: 2px;
+    }
+
+    /* 2) Gym Mode Toggle */
+    .toggle-container {
+      margin: 0 auto 1rem auto;
       display: inline-block;
-      width: 160px;
-      height: 40px;
+      position: relative;
+      width: 140px;
+      height: 35px;
     }
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
+    .toggle-container input {
+      display: none;
     }
     .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0; 
-      left: 0; 
-      right: 0; 
-      bottom: 0;
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
       background-color: #556B2F;
       transition: 0.4s;
-      border-radius: 40px;
-      z-index: 1;
+      border-radius: 35px;
     }
     .slider:before {
       content: "";
       position: absolute;
-      height: 32px;
-      width: 32px;
+      height: 27px;
+      width: 27px;
       left: 4px;
       bottom: 4px;
       background-color: #fff;
       transition: 0.4s;
       border-radius: 50%;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 2;
-    }
-    .slider:after {
-      content: "Full Gym";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #ffffff;
-      font-size: 0.9rem;
-      pointer-events: none;
-      z-index: 3; 
-      text-align: center;
-      white-space: nowrap;
     }
     input:checked + .slider {
       background-color: #8C4528;
     }
     input:checked + .slider:before {
-      transform: translateX(120px);
+      transform: translateX(105px);
     }
-    input:checked + .slider:after {
-      content: "DB Only";
+    .slider-text {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100%;
+      text-align: center;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 600;
+      pointer-events: none;
     }
-    input:focus + .slider {
-      box-shadow: 0 0 1px #556B2F;
+    .slider-text-left { left: 0; }
+    .slider-text-right { right: 0; }
+    input:checked ~ .slider .slider-text-left {
+      display: none;
+    }
+    input:not(:checked) ~ .slider .slider-text-right {
+      display: none;
     }
 
-    @media (max-width: 600px) {
+    /* 3) Exercise List */
+    .exercise-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 1rem 0;
+      align-items: center;
+    }
+    /* Changed to 95% width and darker background #FFE7D0 */
+    .exercise-card {
+      width: 95%;
+      max-width: 550px;
+      background: #FFE7D0; /* darker peach color for better contrast */
+      border: 1px solid #EEE;
+      border-radius: 5px;
+      padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.95rem;
+      font-weight: 600;
+      box-sizing: border-box;
+      min-height: 60px;
+    }
+    .exercise-card .info {
+      text-align: left;
+    }
+    .exercise-card button {
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .exercise-card button:hover {
+      transform: scale(1.2);
+    }
+
+    /* 4) Bottom Bar (Start + Info) */
+    .bottom-bar {
+      margin-top: 1.5rem;
+      position: relative;
+    }
+    .info-btn {
+      font-size: 1.25rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      position: absolute;
+      left: 0; 
+      top: 0;
+      margin-top: 8px;
+    }
+    .info-btn:hover {
+      transform: scale(1.1);
+    }
+    .start-workout-btn {
+      display: inline-block;
+      width: 100%;
+      background: #556B2F;
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .start-workout-btn:hover {
+      background: #3F4E24;
+    }
+
+    /* Info overlay */
+    .info-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    .info-overlay-content {
+      background: #F9F8F3;
+      border-radius: 8px;
+      padding: 1rem;
+      width: 80%;
+      max-width: 300px;
+      text-align: center;
+      position: relative;
+    }
+    .info-overlay-content button {
+      display: block;
+      width: 100%;
+      margin: 0.5rem auto;
+      padding: 0.625rem;
+      background: #A0522D;
+      color: #fff;
+      border: 2px solid #8C4528;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .info-overlay-content button:hover {
+      background: #8C4528;
+    }
+    .close-info {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 1.25rem;
+      cursor: pointer;
+    }
+
+    @media (min-width: 601px) {
       body {
-        padding: 1rem;
+        padding: 2rem;
       }
-      .switch {
-        width: 140px;
-        height: 35px;
-      }
-      .slider:before {
-        height: 27px;
-        width: 27px;
-      }
-      .slider:after {
-        font-size: 0.8rem;
-      }
-      input:checked + .slider:before {
-        transform: translateX(105px);
+      .muscle-card {
+        height: 100px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container"><!-- Outer .container box -->
-    <h1>Welcome, <%= user.email.split('@')[0] %>!</h1>
+  <div class="container">
 
-    <!-- Muscle Group Selection + Dumbbell Toggle -->
-    <form action="/generate-workout" method="POST" class="button-form">
-      <p style="font-weight: 600;">Area of Focus:</p>
-      <select name="muscleGroup" required>
-        <option value="legs" <%= muscleGroup === 'legs' ? 'selected' : '' %>>Legs</option>
-        <option value="shouldersAndBack" <%= muscleGroup === 'shouldersAndBack' ? 'selected' : '' %>>Shoulders and Back</option>
-        <option value="chestArmsAndAbs" <%= muscleGroup === 'chestArmsAndAbs' ? 'selected' : '' %>>Chest, Arms, and Abs</option>
-      </select>
+    <!-- (1) Muscle Group Cards (3 forms) -->
+    <div class="muscle-groups">
+      <!-- Card 1: Chest, Arms & Abs -->
+      <form 
+        action="/generate-workout" 
+        method="POST" 
+        class="muscle-card" 
+        id="card-chestAbsArms"
+        onClick="this.submit()" 
+      >
+        <input type="hidden" name="muscleGroup" value="chestArmsAndAbs" />
+        <input type="hidden" name="dumbbell_only" value="<%= dumbbellOnly ? '1' : '0' %>">
+        <div class="emoji">💪</div>
+        <div>Chest, Arms & Abs</div>
+      </form>
 
-      <div class="toggle-container">
-        <label class="switch">
-          <input 
-            type="checkbox" 
-            id="dumbbell-only" 
-            name="dumbbell_only" 
-            value="1" 
-            <%= dumbbellOnly ? 'checked' : '' %>
-          >
-          <span class="slider"></span>
-        </label>
-      </div>
+      <!-- Card 2: Back & Shoulders -->
+      <form 
+        action="/generate-workout" 
+        method="POST" 
+        class="muscle-card" 
+        id="card-backShoulders"
+        onClick="this.submit()"
+      >
+        <input type="hidden" name="muscleGroup" value="shouldersAndBack" />
+        <input type="hidden" name="dumbbell_only" value="<%= dumbbellOnly ? '1' : '0' %>">
+        <div class="emoji">🏋️</div>
+        <div>Back & Shoulders</div>
+      </form>
 
-      <button type="submit">Generate Workout</button>
+      <!-- Card 3: Legs -->
+      <form 
+        action="/generate-workout" 
+        method="POST" 
+        class="muscle-card" 
+        id="card-legs"
+        onClick="this.submit()"
+      >
+        <input type="hidden" name="muscleGroup" value="legs" />
+        <input type="hidden" name="dumbbell_only" value="<%= dumbbellOnly ? '1' : '0' %>">
+        <div class="emoji">🦵</div>
+        <div>Legs</div>
+      </form>
+    </div>
+
+    <!-- (2) Gym Mode Toggle -->
+    <form action="/generate-workout" method="POST" style="margin-bottom:1rem;">
+      <input type="hidden" name="muscleGroup" value="<%= muscleGroup %>">
+      <label class="toggle-container">
+        <input 
+          type="checkbox" 
+          name="dumbbell_only" 
+          value="1" 
+          <%= dumbbellOnly ? 'checked' : '' %> 
+          onchange="this.form.submit()" 
+        >
+        <span class="slider">
+          <span class="slider-text slider-text-left">Full Gym</span>
+          <span class="slider-text slider-text-right">DB Only</span>
+        </span>
+      </label>
     </form>
 
+    <!-- (3) Exercise List -->
     <% if (workout && workout.length > 0) { %>
-      <ul>
+      <div class="exercise-list">
         <% workout.forEach((exercise, index) => { %>
-          <li class="workout-item">
-            <div class="item-info">
-              <strong>Exercise <%= index + 1 %>: <%= exercise.exercise_name || 'Exercise Not Available' %></strong><br>
+          <div class="exercise-card">
+            <div class="info">
+              <strong><%= exercise.exercise_name || 'Not Available' %></strong><br>
               <% if (exercise.lastPerformance) { %>
-                Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
-                Avg Reps: <%= exercise.lastPerformance.averageReps %>
+                <span style="font-size:0.85rem;">
+                  Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
+                  Avg Reps: <%= exercise.lastPerformance.averageReps %>
+                </span>
               <% } else { %>
-                No performance data available
+                <span style="font-size:0.8rem;">No performance data</span>
               <% } %>
             </div>
-            <!-- 🔄 Swap button form -->
-            <form action="/swap-exercise" method="POST" class="swap-form">
+            <!-- Refresh button => swap-exercise form -->
+            <form action="/swap-exercise" method="POST">
               <input type="hidden" name="exerciseIndex" value="<%= index %>">
               <input type="hidden" name="sourcePage" value="generate">
               <button type="submit" title="Swap this exercise">🔄</button>
             </form>
-          </li>
+          </div>
         <% }); %>
-      </ul>
-
-      <!-- "Start Workout" Button -->
-      <form action="/start-workout" method="POST" class="button-form" id="start-workout-form">
-        <input type="hidden" name="workout" value='<%- JSON.stringify(workout) %>'>
-        <button type="button" class="start-workout-button" onclick="startWorkout()">Start Workout</button>
-      </form>
+      </div>
+    <% } else { %>
+      <p style="margin:1rem 0;">No workout generated yet.</p>
     <% } %>
 
-    <!-- "Reporting" button -->
-    <form action="/analytics" method="GET" class="button-form">
-      <button type="submit">Reporting</button>
-    </form>
+    <!-- (4) Bottom Bar -->
+    <div class="bottom-bar" style="margin-top:1.5rem; position:relative;">
+      <!-- ℹ️ button => opens overlay -->
+      <button type="button" class="info-btn" onclick="toggleInfoOverlay()" aria-label="Info menu">
+        ℹ️
+      </button>
+      <!-- Start Workout -->
+      <form action="/start-workout" method="POST">
+        <button type="submit" class="start-workout-btn">START WORKOUT</button>
+      </form>
+    </div>
+  </div><!-- end .container -->
 
-    <!-- Info & Logout Buttons -->
-    <form action="/info" method="GET" class="button-form">
-      <button type="submit">Info</button>
-    </form>
-    <form action="/logout" method="POST" class="button-form">
-      <button type="submit">Logout</button>
-    </form>
-
-    <!-- Hidden Silent Audio for Unlocking Audio Context -->
-    <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
-
-    <script>
-      // Function to handle Start Workout button click
-      function startWorkout() {
-        const silentAudio = document.getElementById('silent-audio');
-        silentAudio.play().then(() => {
-          document.getElementById('start-workout-form').submit();
-        }).catch((error) => {
-          console.error('Audio unlock failed:', error);
-          alert('Unable to start workout due to audio restrictions. Please try again.');
-        });
-      }
-    </script>
+  <!-- Info Overlay -->
+  <div class="info-overlay" id="infoOverlay">
+    <div class="info-overlay-content">
+      <button class="close-info" onclick="toggleInfoOverlay()">✖</button>
+      <!-- Info -->
+      <form action="/info" method="GET">
+        <button type="submit">Info</button>
+      </form>
+      <!-- Reporting -->
+      <form action="/analytics" method="GET">
+        <button type="submit">Reporting</button>
+      </form>
+      <!-- Logout -->
+      <form action="/logout" method="POST">
+        <button type="submit">Logout</button>
+      </form>
+    </div>
   </div>
+
+  <script>
+    // highlight the selected muscle group card
+    const muscleGroup = "<%= muscleGroup %>";
+    if (muscleGroup === 'chestArmsAndAbs') {
+      document.getElementById('card-chestAbsArms')?.classList.add('active');
+    } else if (muscleGroup === 'shouldersAndBack') {
+      document.getElementById('card-backShoulders')?.classList.add('active');
+    } else if (muscleGroup === 'legs') {
+      document.getElementById('card-legs')?.classList.add('active');
+    }
+
+    // Info overlay toggler
+    function toggleInfoOverlay() {
+      const overlay = document.getElementById('infoOverlay');
+      if (!overlay) return;
+      if (overlay.style.display === 'flex') {
+        overlay.style.display = 'none';
+      } else {
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+      }
+    }
+  </script>
 </body>
 </html>

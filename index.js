@@ -226,9 +226,10 @@ app.get('/login', (req, res) => {
   res.render('login', { error: null });
 });
 
-// Login page (POST)
+// Login page (POST): Handle user login
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
     return res.status(400).render('login', { error: 'Email and password are required' });
   }
@@ -250,12 +251,70 @@ app.post('/login', async (req, res) => {
       return res.status(401).render('login', { error: 'Invalid password' });
     }
 
+    // If login success:
     req.session.user = { id: user.id, email: user.email };
-    res.redirect('/generate-workout');
+    // Instead of normal redirect, we auto-generate a default workout for chestArmsAndAbs:
+    res.redirect('/generate-workout?autogen=chestArmsAndAbs');
 
   } catch (err) {
     console.error('Error during login:', err);
     res.status(500).render('login', { error: 'Login failed. Please try again.' });
+  }
+});
+
+// Generate Workout page (GET)
+app.get('/generate-workout', isAuthenticated, async (req, res) => {
+  let { autogen } = req.query;
+
+  // Retrieve from session or set defaults
+  let muscleGroup = req.session.muscleGroup || null; // user’s last chosen group
+  let dumbbellOnly = req.session.dumbbellOnly || false;
+  let userId = req.session.user.id;
+
+  // If we have ?autogen=someMuscleGroup => auto-generate a new workout
+  if (autogen) {
+    muscleGroup = autogen;  // e.g. "chestArmsAndAbs"
+
+    try {
+      // generate new random workout
+      const workout = await generateWorkout(userId, muscleGroup, dumbbellOnly);
+
+      // store in session
+      req.session.workout = workout;
+      req.session.muscleGroup = muscleGroup;
+      req.session.save(() => {
+        // pass data to EJS
+        return res.render('generate-workout', { 
+          user: req.session.user,
+          muscleGroup,
+          workout,
+          dumbbellOnly,
+          error: null
+        });
+      });
+    } catch (err) {
+      console.error("Auto-Generate Workout Error:", err);
+      return res.render('generate-workout', { 
+        user: req.session.user,
+        muscleGroup: null,
+        workout: [],
+        dumbbellOnly,
+        error: 'Failed to auto-generate workout. Please try again.'
+      });
+    }
+
+  } else {
+    // Normal flow: just render the page with existing workout or none
+    // muscleGroup, workout, dumbbellOnly are from session
+    // You might want to pass your session data if it exists:
+    const workout = req.session.workout || [];
+    res.render('generate-workout', {
+      user: req.session.user,
+      muscleGroup: req.session.muscleGroup || 'chestArmsAndAbs', 
+      workout,
+      dumbbellOnly,
+      error: null
+    });
   }
 });
 
