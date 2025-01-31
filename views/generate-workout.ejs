@@ -18,7 +18,6 @@
       box-sizing: border-box;
       overflow-x: hidden;
     }
-
     .container {
       background: #F9F8F3;
       max-width: 650px;
@@ -52,7 +51,7 @@
       color: #333;
       cursor: pointer;
       transition: background 0.3s ease, border-color 0.3s ease;
-      margin: 0; /* ensures no extra spacing around the form */
+      margin: 0;
     }
     .muscle-card:hover {
       background: #f0ebeb;
@@ -130,11 +129,10 @@
       margin: 1rem 0;
       align-items: center;
     }
-    /* Changed to 95% width and darker background #FFE7D0 */
     .exercise-card {
       width: 95%;
-      max-width: 550px;
-      background: #FFE7D0; /* darker peach color for better contrast */
+      max-width: 500px;
+      background: #FFE7D0; 
       border: 1px solid #EEE;
       border-radius: 5px;
       padding: 0.5rem;
@@ -172,7 +170,7 @@
       cursor: pointer;
       transition: transform 0.2s ease;
       position: absolute;
-      left: 0; 
+      left: 0;
       top: 0;
       margin-top: 8px;
     }
@@ -196,7 +194,7 @@
       background: #3F4E24;
     }
 
-    /* Info overlay */
+    /* Info overlay => 4 equally spaced buttons */
     .info-overlay {
       display: none;
       position: fixed;
@@ -213,12 +211,14 @@
       width: 80%;
       max-width: 300px;
       text-align: center;
-      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem; /* space between buttons */
     }
+    /* Make each button roughly equal size */
     .info-overlay-content button {
       display: block;
       width: 100%;
-      margin: 0.5rem auto;
       padding: 0.625rem;
       background: #A0522D;
       color: #fff;
@@ -230,15 +230,6 @@
     }
     .info-overlay-content button:hover {
       background: #8C4528;
-    }
-    .close-info {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: none;
-      border: none;
-      font-size: 1.25rem;
-      cursor: pointer;
     }
 
     @media (min-width: 601px) {
@@ -325,12 +316,17 @@
             <div class="info">
               <strong><%= exercise.exercise_name || 'Not Available' %></strong><br>
               <% if (exercise.lastPerformance) { %>
-                <span style="font-size:0.85rem;">
-                  Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs, 
+                <!-- Two lines for performance data -->
+                <span style="font-size:0.85rem; display:block; margin-top:4px;">
+                  Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs
+                </span>
+                <span style="font-size:0.85rem; display:block; margin-top:2px;">
                   Avg Reps: <%= exercise.lastPerformance.averageReps %>
                 </span>
               <% } else { %>
-                <span style="font-size:0.8rem;">No performance data</span>
+                <span style="font-size:0.8rem; display:block; margin-top:4px;">
+                  No performance data
+                </span>
               <% } %>
             </div>
             <!-- Refresh button => swap-exercise form -->
@@ -359,10 +355,13 @@
     </div>
   </div><!-- end .container -->
 
-  <!-- Info Overlay -->
+  <!-- Info Overlay: 4 evenly spaced buttons in column. 
+       1) X (close), 2) Info, 3) Reporting, 4) Logout
+  -->
   <div class="info-overlay" id="infoOverlay">
     <div class="info-overlay-content">
-      <button class="close-info" onclick="toggleInfoOverlay()">✖</button>
+      <!-- Close button calls toggleInfoOverlay() -->
+      <button type="button" onclick="toggleInfoOverlay()">✖</button>
       <!-- Info -->
       <form action="/info" method="GET">
         <button type="submit">Info</button>
