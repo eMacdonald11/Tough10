@@ -100,6 +100,12 @@
       color: #333;
       margin-bottom: 0.5rem;
     }
+
+    /* 
+      CHANGES HERE:
+      For weight => type="number", inputmode="decimal", step="any"
+      For reps => type="number", inputmode="numeric", pattern="[0-9]*"
+    */
     .input-row input[type="number"] {
       width: 100%; 
       font-size: 1rem; 
@@ -109,6 +115,17 @@
       border-radius: 3px;
       box-sizing: border-box;
     }
+
+    #weight-input {
+      inputmode: decimal;
+      step: any;
+    }
+
+    #reps-input {
+      inputmode: numeric;
+      pattern: "[0-9]*";
+    }
+    /* End changes */
 
     #input-form button {
       display: block;
@@ -207,11 +224,23 @@
       <h3>Enter Your Set Data</h3>
       <div class="input-row">
         <label for="weight-input">Weight</label>
-        <input type="number" id="weight-input" placeholder="lbs">
+        <input 
+          type="number" 
+          id="weight-input"
+          inputmode="decimal" 
+          step="any"
+          placeholder="lbs"
+        >
       </div>
       <div class="input-row">
         <label for="reps-input">Reps</label>
-        <input type="number" id="reps-input" placeholder="reps">
+        <input 
+          type="number" 
+          id="reps-input"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="reps"
+        >
       </div>
       <button onclick="submitSetData()">Submit</button>
       <div class="feedback" id="feedback-message"></div>
