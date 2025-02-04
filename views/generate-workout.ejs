@@ -6,7 +6,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
     body {
       font-family: 'Open Sans', sans-serif;
@@ -27,8 +26,7 @@
       border: 1px solid #DDD;
       box-sizing: border-box;
     }
-
-    /* 1) Muscle Group Cards */
+    /* Muscle Group Cards */
     .muscle-groups {
       display: flex;
       justify-content: space-between;
@@ -65,8 +63,7 @@
       font-size: 1.5rem;
       margin-bottom: 2px;
     }
-
-    /* 2) Gym Mode Toggle */
+    /* Gym Mode Toggle */
     .toggle-container {
       margin: 0 auto 1rem auto;
       display: inline-block;
@@ -120,8 +117,7 @@
     input:not(:checked) ~ .slider .slider-text-right {
       display: none;
     }
-
-    /* 3) Exercise List */
+    /* Exercise List */
     .exercise-list {
       display: flex;
       flex-direction: column;
@@ -132,7 +128,7 @@
     .exercise-card {
       width: 95%;
       max-width: 500px;
-      background: #FFE7D0; 
+      background: #FFE7D0;
       border: 1px solid #EEE;
       border-radius: 5px;
       padding: 0.5rem;
@@ -147,6 +143,15 @@
     .exercise-card .info {
       text-align: left;
     }
+    /* For Type1, display max and reps on separate lines */
+    .exercise-card.type1 .info span {
+      display: block;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+    .exercise-card:not(.type1) .info span {
+      font-size: 0.85rem;
+    }
     .exercise-card button {
       background: none;
       border: none;
@@ -157,8 +162,7 @@
     .exercise-card button:hover {
       transform: scale(1.2);
     }
-
-    /* 4) Bottom Bar (Start + Info) */
+    /* Bottom Bar */
     .bottom-bar {
       margin-top: 1.5rem;
       position: relative;
@@ -193,8 +197,7 @@
     .start-workout-btn:hover {
       background: #3F4E24;
     }
-
-    /* Info overlay => 4 equally spaced buttons */
+    /* Info Overlay: 4 buttons in a column */
     .info-overlay {
       display: none;
       position: fixed;
@@ -213,9 +216,8 @@
       text-align: center;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem; /* space between buttons */
+      gap: 0.75rem;
     }
-    /* Make each button roughly equal size */
     .info-overlay-content button {
       display: block;
       width: 100%;
@@ -231,7 +233,6 @@
     .info-overlay-content button:hover {
       background: #8C4528;
     }
-
     @media (min-width: 601px) {
       body {
         padding: 2rem;
@@ -244,45 +245,24 @@
 </head>
 <body>
   <div class="container">
-
-    <!-- (1) Muscle Group Cards (3 forms) -->
+    <!-- (1) Muscle Group Cards -->
     <div class="muscle-groups">
       <!-- Card 1: Chest, Arms & Abs -->
-      <form 
-        action="/generate-workout" 
-        method="POST" 
-        class="muscle-card" 
-        id="card-chestAbsArms"
-        onClick="this.submit()" 
-      >
+      <form action="/generate-workout" method="POST" class="muscle-card" id="card-chestAbsArms" onClick="this.submit()">
         <input type="hidden" name="muscleGroup" value="chestArmsAndAbs" />
         <input type="hidden" name="dumbbell_only" value="<%= dumbbellOnly ? '1' : '0' %>">
         <div class="emoji">💪</div>
         <div>Chest, Arms & Abs</div>
       </form>
-
       <!-- Card 2: Back & Shoulders -->
-      <form 
-        action="/generate-workout" 
-        method="POST" 
-        class="muscle-card" 
-        id="card-backShoulders"
-        onClick="this.submit()"
-      >
+      <form action="/generate-workout" method="POST" class="muscle-card" id="card-backShoulders" onClick="this.submit()">
         <input type="hidden" name="muscleGroup" value="shouldersAndBack" />
         <input type="hidden" name="dumbbell_only" value="<%= dumbbellOnly ? '1' : '0' %>">
         <div class="emoji">🏋️</div>
         <div>Back & Shoulders</div>
       </form>
-
       <!-- Card 3: Legs -->
-      <form 
-        action="/generate-workout" 
-        method="POST" 
-        class="muscle-card" 
-        id="card-legs"
-        onClick="this.submit()"
-      >
+      <form action="/generate-workout" method="POST" class="muscle-card" id="card-legs" onClick="this.submit()">
         <input type="hidden" name="muscleGroup" value="legs" />
         <input type="hidden" name="dumbbell_only" value="<%= dumbbellOnly ? '1' : '0' %>">
         <div class="emoji">🦵</div>
@@ -294,13 +274,7 @@
     <form action="/generate-workout" method="POST" style="margin-bottom:1rem;">
       <input type="hidden" name="muscleGroup" value="<%= muscleGroup %>">
       <label class="toggle-container">
-        <input 
-          type="checkbox" 
-          name="dumbbell_only" 
-          value="1" 
-          <%= dumbbellOnly ? 'checked' : '' %> 
-          onchange="this.form.submit()" 
-        >
+        <input type="checkbox" name="dumbbell_only" value="1" <%= dumbbellOnly ? 'checked' : '' %> onchange="this.form.submit()">
         <span class="slider">
           <span class="slider-text slider-text-left">Full Gym</span>
           <span class="slider-text slider-text-right">DB Only</span>
@@ -312,24 +286,20 @@
     <% if (workout && workout.length > 0) { %>
       <div class="exercise-list">
         <% workout.forEach((exercise, index) => { %>
-          <div class="exercise-card">
+          <div class="exercise-card <%= exercise.type === 'type1' ? 'type1' : '' %>">
             <div class="info">
               <strong><%= exercise.exercise_name || 'Not Available' %></strong><br>
-              <% if (exercise.lastPerformance) { %>
-                <!-- Two lines for performance data -->
-                <span style="font-size:0.85rem; display:block; margin-top:4px;">
-                  Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs
-                </span>
-                <span style="font-size:0.85rem; display:block; margin-top:2px;">
-                  Avg Reps: <%= exercise.lastPerformance.averageReps %>
-                </span>
+              <% if (exercise.type === 'type1' && exercise.maxWeight !== undefined) { %>
+                <span>Max Weight: <%= exercise.maxWeight %> lbs</span>
+                <span>Reps Completed: <%= exercise.repsAtMax %></span>
+              <% } else if (exercise.lastPerformance) { %>
+                <span>Avg Weight: <%= exercise.lastPerformance.averageWeight %> lbs</span>
+                <span>Avg Reps: <%= exercise.lastPerformance.averageReps %></span>
               <% } else { %>
-                <span style="font-size:0.8rem; display:block; margin-top:4px;">
-                  No performance data
-                </span>
+                <span>No performance data</span>
               <% } %>
             </div>
-            <!-- Refresh button => swap-exercise form -->
+            <!-- Refresh button -->
             <form action="/swap-exercise" method="POST">
               <input type="hidden" name="exerciseIndex" value="<%= index %>">
               <input type="hidden" name="sourcePage" value="generate">
@@ -344,33 +314,23 @@
 
     <!-- (4) Bottom Bar -->
     <div class="bottom-bar" style="margin-top:1.5rem; position:relative;">
-      <!-- ℹ️ button => opens overlay -->
-      <button type="button" class="info-btn" onclick="toggleInfoOverlay()" aria-label="Info menu">
-        ℹ️
-      </button>
-      <!-- Start Workout -->
+      <button type="button" class="info-btn" onclick="toggleInfoOverlay()" aria-label="Info menu">ℹ️</button>
       <form action="/start-workout" method="POST">
         <button type="submit" class="start-workout-btn">START WORKOUT</button>
       </form>
     </div>
   </div><!-- end .container -->
 
-  <!-- Info Overlay: 4 evenly spaced buttons in column. 
-       1) X (close), 2) Info, 3) Reporting, 4) Logout
-  -->
+  <!-- Info Overlay: 4 evenly spaced buttons -->
   <div class="info-overlay" id="infoOverlay">
     <div class="info-overlay-content">
-      <!-- Close button calls toggleInfoOverlay() -->
       <button type="button" onclick="toggleInfoOverlay()">✖</button>
-      <!-- Info -->
       <form action="/info" method="GET">
         <button type="submit">Info</button>
       </form>
-      <!-- Reporting -->
       <form action="/analytics" method="GET">
         <button type="submit">Reporting</button>
       </form>
-      <!-- Logout -->
       <form action="/logout" method="POST">
         <button type="submit">Logout</button>
       </form>
@@ -378,7 +338,7 @@
   </div>
 
   <script>
-    // highlight the selected muscle group card
+    // Highlight selected muscle group card
     const muscleGroup = "<%= muscleGroup %>";
     if (muscleGroup === 'chestArmsAndAbs') {
       document.getElementById('card-chestAbsArms')?.classList.add('active');
@@ -387,15 +347,12 @@
     } else if (muscleGroup === 'legs') {
       document.getElementById('card-legs')?.classList.add('active');
     }
-
     // Info overlay toggler
     function toggleInfoOverlay() {
       const overlay = document.getElementById('infoOverlay');
       if (!overlay) return;
+      overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
       if (overlay.style.display === 'flex') {
-        overlay.style.display = 'none';
-      } else {
-        overlay.style.display = 'flex';
         overlay.style.justifyContent = 'center';
         overlay.style.alignItems = 'center';
       }
