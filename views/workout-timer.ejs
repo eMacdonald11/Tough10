@@ -2,28 +2,25 @@
 <html lang="en">
 <head>
   <title>PACE KEEPER</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ensures proper scaling on mobile devices -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+
   <style>
-    /*
-      Body is #ECE7D8 (slightly darker),
-      .container is #F9F8F3 with max-width:650px,
-      everything else is your existing design.
-    */
+    /* Overall Page Layout */
     body {
       font-family: 'Open Sans', sans-serif;
       text-align: center;
-      background: #ECE7D8; /* Darker outside */
+      background: #ECE7D8;
       color: #333;
       margin: 0;
       padding: 2rem;
       box-sizing: border-box;
-      overflow-x: hidden;
+      overflow-x: hidden; /* avoids horizontal scrolling */
     }
     .container {
-      background: #F9F8F3; /* Lighter inside */
+      background: #F9F8F3;
       max-width: 650px;
       margin: 0 auto;
       padding: 2rem;
@@ -33,43 +30,48 @@
     }
     h1 {
       color: #556B2F;
-      margin-bottom: 1.25rem; 
-      font-size: 1.5rem; 
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
     }
+
+    /* Single container for exercise info + chart, always visible */
+    #exercise-info {
+      margin: 0 auto 1rem auto;
+      width: 100%;
+      max-width: 300px;
+    }
+    #exercise-heading {
+      font-weight: bold;
+      font-size: 1.125rem;
+      margin-bottom: 0.5rem;
+    }
+    #exercise-chart {
+      margin-bottom: 0.5rem;
+    }
+
+    /* Timer Containers */
     .timer-container {
-      display: block; 
-      margin: 0 auto 1.25rem auto; 
+      display: block;
+      margin: 0 auto 1rem auto;
       background: #ffc87f;
-      padding: 1rem; 
+      padding: 1rem;
       border-radius: 5px;
       border: 1px solid #EEE;
       width: 100%;
-      max-width: 300px; 
+      max-width: 300px;
       font-weight: bold;
-      transition: opacity 0.3s ease;
       text-align: center;
       box-sizing: border-box;
     }
-    #prep-timer h3 {
-      margin-top: 0.25rem; 
-      margin-bottom: 0.5rem; 
-    }
-    #exercise-name {
-      display: none;
-      margin: 0 auto 1rem auto; 
-      width: 100%;
-      max-width: 300px;
-      font-weight: bold;
-      font-size: 1.125rem;
-      box-sizing: border-box;
-    }
+
+    /* Input Form => Now a real <form> so pressing Enter triggers submit */
     #input-form {
       display: none;
-      margin: 1.25rem auto 0 auto; 
+      margin: 1rem auto 0 auto;
       width: 100%;
       max-width: 300px;
       background: #FFF;
-      padding: 1rem; 
+      padding: 1rem;
       border-radius: 5px;
       border: 1px solid #EEE;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -78,27 +80,26 @@
     }
     #input-form h3 {
       margin-top: 0;
-      margin-bottom: 0.9375rem; 
-      font-size: 1.125rem; 
+      margin-bottom: 0.75rem;
+      font-size: 1.125rem;
       color: #556B2F;
-      text-align: center; 
+      text-align: center;
     }
     .input-row {
       margin-bottom: 1rem;
     }
     .input-row label {
       display: block;
-      width: 100%;
       font-weight: 600;
-      font-size: 1rem; 
-      color: #333;
+      font-size: 1rem;
       margin-bottom: 0.5rem;
+      color: #333;
     }
     .input-row input[type="number"] {
-      width: 100%; 
-      font-size: 1rem; 
-      padding: 0.5rem; 
-      margin-bottom: 0.5rem; 
+      width: 100%;
+      font-size: 1rem;
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
       border: 1px solid #CCC;
       border-radius: 3px;
       box-sizing: border-box;
@@ -106,8 +107,7 @@
     #input-form button {
       display: block;
       width: 100%;
-      max-width: 600px;
-      margin: 0.9375rem auto 0 auto;
+      margin: 0.5rem auto 0 auto;
       padding: 0.75rem 1.25rem;
       font-size: 1rem;
       font-weight: 700;
@@ -117,40 +117,18 @@
       border-radius: 5px;
       cursor: pointer;
       transition: background 0.3s ease;
-      text-align: center;
       box-sizing: border-box;
     }
     #input-form button:hover {
       background: #8C4528;
     }
     .feedback {
-      margin-top: 0.625rem;
+      margin-top: 0.5rem;
       font-size: 0.875rem;
       color: green;
     }
-    p, li {
-      font-size: 1rem; 
-      line-height: 1.5;
-      color: #333;
-    }
-    #ready-button {
-      display: block;
-      margin: 1.25rem auto 0 auto;
-      padding: 0.75rem 1.5rem;
-      font-size: 1rem;
-      font-weight: 700;
-      background: #556B2F;
-      color: #ffffff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      box-sizing: border-box;
-    }
-    #ready-button:hover {
-      background: #3F4E24;
-    }
-    /* New vertical rep animation for Type1 exercises */
+
+    /* Rep Animation (Type1) */
     .rep-animation-container {
       display: flex;
       align-items: center;
@@ -158,8 +136,8 @@
       margin-top: 0.5rem;
     }
     .vertical-bar {
-      width: 60px;  /* thicker and wider */
-      height: 150px; /* taller */
+      width: 60px;
+      height: 150px;
       background: #ddd;
       border-radius: 4px;
       overflow: hidden;
@@ -170,7 +148,6 @@
       height: 100%;
       background: #556B2F;
       position: absolute;
-      /* Changed transform-origin to bottom so it drains upward */
       transform-origin: bottom;
       animation: drainFill 5s infinite;
     }
@@ -185,6 +162,46 @@
       margin-left: 12px;
       width: 100px;
     }
+
+    /* "I'm Ready!" Button */
+    #ready-button {
+      display: block;
+      margin: 1rem auto 0 auto;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      background: #556B2F;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-sizing: border-box;
+    }
+    #ready-button:hover {
+      background: #3F4E24;
+    }
+
+    /* 4×3 table for Type1 */
+    .type1-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.5rem auto;
+      max-width: 300px;
+      font-size: 0.9rem;
+    }
+    .type1-table th,
+    .type1-table td {
+      padding: 0.4rem;
+      text-align: center;
+      border: 1px solid #EEE;
+      white-space: nowrap;
+    }
+    .type1-table .best-row {
+      background: #ffe0b3;
+      font-weight: 700;
+    }
+
     @media (min-width: 601px) {
       body { padding: 2rem; }
     }
@@ -195,41 +212,35 @@
 </head>
 <body>
   <div class="container">
-    <h1> TOUGH10 </h1>
+    <h1>TOUGH10</h1>
 
-    <!-- PREP TIMER -->
-    <div id="prep-timer" class="timer-container">
-      <h3>Your next exercise:</h3>
-      <div id="exercise-details">
-        <h2><%= workout[0]?.exercise_name || 'Exercise Name Not Available' %></h2>
-        <p>
-          <% if (workout[0]?.type === 'type1' && workout[0].maxWeight !== undefined) { %>
-            Max Weight: <%= workout[0].maxWeight %> lbs<br>
-            Recommended: <%= Math.round(Number(workout[0].maxWeight) * 0.70) %> lbs
-          <% } else if (workout[0]?.lastPerformance) { %>
-            Avg Weight: <%= workout[0].lastPerformance.averageWeight %> lbs<br>
-            Avg Reps: <%= workout[0].lastPerformance.averageReps %>
-          <% } else { %>
-            No performance data available
-          <% } %>
-        </p>
-      </div>
-      <div>Prepare to begin in: <span id="prep-remaining">15</span>s</div>
+    <!-- 
+      #exercise-info: always visible
+      => "Exercise Name - Set X of Y" + chart if type1 or fallback
+    -->
+    <div id="exercise-info">
+      <div id="exercise-heading"></div>
+      <div id="exercise-chart"></div>
+      <button id="ready-button" onclick="readyButtonClicked()">I'm Ready!</button>
     </div>
 
-    <!-- ACTIVE EXERCISE TIMER -->
-    <div id="exercise-name"></div>
-    <div id="timer" class="timer-container" style="display: none;">
+    <!-- 15s prep -->
+    <div id="prep-timer" class="timer-container" style="display:none;">
+      Prepare to begin in: <span id="prep-remaining">15</span>s
+    </div>
+
+    <!-- ACTIVE EXERCISE Timer -->
+    <div id="timer" class="timer-container" style="display:none;">
       Time Remaining: <span id="time-remaining">30</span>s
     </div>
 
-    <!-- REST TIMER -->
-    <div id="rest-timer" class="timer-container" style="display: none;">
-      Next set begins in: <span id="rest-remaining">20</span>s
+    <!-- REST Timer -->
+    <div id="rest-timer" class="timer-container" style="display:none;">
+      Next set begins in: <span id="rest-remaining">30</span>s
     </div>
 
-    <!-- INPUT FORM -->
-    <div id="input-form">
+    <!-- PERFORMANCE DATA FORM => Now a real <form> so hitting Enter triggers submitSetData -->
+    <form id="input-form" onsubmit="event.preventDefault(); submitSetData();">
       <h3>Enter Your Set Data</h3>
       <div class="input-row">
         <label for="weight-input">Weight</label>
@@ -239,361 +250,351 @@
         <label for="reps-input">Reps</label>
         <input type="number" id="reps-input" placeholder="reps">
       </div>
-      <button onclick="submitSetData()">Submit</button>
+      <button type="submit">Submit</button>
       <div class="feedback" id="feedback-message"></div>
-    </div>
+    </form>
 
-    <!-- AUDIO Elements -->
+    <!-- AUDIO -->
     <audio id="countdown" src="/audio/countdown.mp3" preload="auto"></audio>
     <audio id="bell" src="/audio/bell.mp3" preload="auto"></audio>
     <audio id="halfway-sound" src="/audio/halfway.mp3" preload="auto"></audio>
     <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
 
-    <!-- "I'm Ready!" Button -->
-    <button id="ready-button" onclick="readyButtonClicked()">I'm Ready!</button>
-
     <script>
-      // For Type1 exercises, recommended percentages for each set:
       const type1Percentages = { 1: 0.70, 2: 0.85, 3: 1.00 };
+      function roundToNearest5(v){ return Math.round(v/5)*5; }
 
       const workout = JSON.parse('<%- JSON.stringify(workout) %>');
       const EXERCISE_INFO = [
-        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 }, 
+        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 },
         { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
-        { sets: 1, exerciseDuration: 90, intraRest: 0, postExerciseRest: 0 }
+        { sets: 1, exerciseDuration: 90, intraRest: 0,  postExerciseRest: 0 }
       ];
 
       let currentExerciseIndex = 0;
       let currentSet = 1;
-      let timeRemaining;
-      let timerInterval;
-      let halfwayPlayed = false;
-      let restTimeRemaining;
-      let restInterval;
-      let prepTimeRemaining = 15;
-      let prepInterval;
+      let timeRemaining, timerInterval, halfwayPlayed = false;
+      let restTimeRemaining, restInterval;
+      let prepTimeRemaining = 15, prepInterval;
       let repCountdownInterval;
 
-      // DOM references
-      const exerciseNameEl = document.getElementById('exercise-name');
-      const timeRemainingEl = document.getElementById('time-remaining');
-      const restTimerEl = document.getElementById('rest-timer');
-      const restRemainingEl = document.getElementById('rest-remaining');
-      const prepTimerEl = document.getElementById('prep-timer');
-      const prepRemainingEl = document.getElementById('prep-remaining');
-      const inputFormEl = document.getElementById('input-form');
-      const weightInputEl = document.getElementById('weight-input');
-      const repsInputEl = document.getElementById('reps-input');
-      const feedbackMessageEl = document.getElementById('feedback-message');
+      // DOM
+      const exerciseInfoEl   = document.getElementById('exercise-info');
+      const exerciseHeadingEl= document.getElementById('exercise-heading');
+      const exerciseChartEl  = document.getElementById('exercise-chart');
+      const readyButtonEl    = document.getElementById('ready-button');
 
-      const countdownAudio = document.getElementById('countdown');
-      const bell = document.getElementById('bell');
-      const halfwaySound = document.getElementById('halfway-sound');
-      const silentAudio = document.getElementById('silent-audio');
+      const prepTimerEl      = document.getElementById('prep-timer');
+      const prepRemainingEl  = document.getElementById('prep-remaining');
 
-      if (!workout || workout.length === 0) {
+      const timerEl          = document.getElementById('timer');
+      const timeRemainingEl  = document.getElementById('time-remaining');
+
+      const restTimerEl      = document.getElementById('rest-timer');
+      const restRemainingEl  = document.getElementById('rest-remaining');
+
+      const inputFormEl      = document.getElementById('input-form');
+      const weightInputEl    = document.getElementById('weight-input');
+      const repsInputEl      = document.getElementById('reps-input');
+      const feedbackMessageEl= document.getElementById('feedback-message');
+
+      const countdownAudio   = document.getElementById('countdown');
+      const bell             = document.getElementById('bell');
+      const halfwaySound     = document.getElementById('halfway-sound');
+      const silentAudio      = document.getElementById('silent-audio');
+
+      if(!workout || workout.length === 0){
         window.location.href = '/generate-workout';
       }
 
-      function readyButtonClicked() {
-        silentAudio.play().then(() => {
-          document.getElementById('ready-button').style.display = 'none';
-          startPrepTimer();
-        }).catch((error) => {
-          console.error('Silent audio playback failed:', error);
-          alert('Unable to start workout due to audio restrictions. Please try again.');
-        });
+      // Build 4×3 table for Type1
+      function buildType1Table(ex) {
+        const bestW = ex.maxWeight || 0;
+        const bestR = ex.repsAtMax || 0;
+        return `
+          <table class="type1-table">
+            <tr class="best-row">
+              <td>BEST SET</td>
+              <td>${bestW} lbs</td>
+              <td>${bestR} reps</td>
+            </tr>
+            <tr>
+              <td>SET 1 (70%)</td>
+              <td>${roundToNearest5(bestW*0.70)} lbs</td>
+              <td>10-12 reps</td>
+            </tr>
+            <tr>
+              <td>SET 2 (85%)</td>
+              <td>${roundToNearest5(bestW*0.85)} lbs</td>
+              <td>10-12 reps</td>
+            </tr>
+            <tr>
+              <td>SET 3 (100%)</td>
+              <td>${roundToNearest5(bestW*1.00)}+ lbs</td>
+              <td>${bestR}+ reps</td>
+            </tr>
+          </table>
+        `;
       }
-
-      // Updated Prep Screen: For Type1, show "Max Weight" and "Recommended" for Set 1
-      function startPrepTimer() {
-        const currentExercise = workout[currentExerciseIndex];
-        if (!currentExercise) {
-          window.location.href = '/generate-workout';
-          return;
-        }
-        if (currentExercise.type === 'type1' || currentExercise.maxWeight !== undefined) {
-          const max = Number(currentExercise.maxWeight) || 0;
-          const rec = type1Percentages[currentSet] ? Math.round(max * type1Percentages[currentSet]) : '';
-          prepTimerEl.querySelector('h2').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
-          prepTimerEl.querySelector('p').innerText = `Max Weight: ${max} lbs\nRecommended: ${rec} lbs`;
-        } else {
-          prepTimerEl.querySelector('h2').innerText = currentExercise.exercise_name || 'Exercise Name Not Available';
-          prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(currentExercise);
-        }
-        prepTimerEl.style.display = 'block';
-        prepInterval = setInterval(() => {
-          prepTimeRemaining--;
-          prepRemainingEl.innerText = prepTimeRemaining;
-          if (prepTimeRemaining === 5) {
-            countdownAudio.currentTime = 0;
-            countdownAudio.play();
-          }
-          if (prepTimeRemaining <= 0) {
-            clearInterval(prepInterval);
-            prepTimerEl.style.display = 'none';
-            startTimer();
-          }
-        }, 1000);
-      }
-
-      function fetchPreviousPerformance(exercise) {
-        if (exercise.lastPerformance) {
-          return `Avg Weight: ${exercise.lastPerformance.averageWeight} lbs, Avg Reps: ${exercise.lastPerformance.averageReps}`;
+      function fetchPreviousPerformance(ex) {
+        if (ex.lastPerformance) {
+          return `Avg Weight: ${ex.lastPerformance.averageWeight} lbs<br>Avg Reps: ${ex.lastPerformance.averageReps}`;
         }
         return 'No performance data available';
       }
 
-      function startTimer() {
-        const { sets, exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
-        const exercise = workout[currentExerciseIndex];
-        if (!exercise) {
-          window.location.href = '/generate-workout';
-          return;
-        }
-        // For Type1 exercises, show Max Weight and Recommended Weight for current set
-        if (exercise.type === 'type1' || exercise.maxWeight !== undefined) {
-          const max = Number(exercise.maxWeight) || 0;
-          const rec = type1Percentages[currentSet] ? Math.round(max * type1Percentages[currentSet]) : '';
-          exerciseNameEl.style.display = 'block';
-          exerciseNameEl.innerHTML = `
-            ${exercise.exercise_name} - Set ${currentSet} of ${sets}<br>
-            Max Weight: ${max} lbs<br>
-            Recommended: ${rec} lbs
-          `;
-          // Create vertical rep animation container if not already present
-          if (!document.getElementById('repAnimationContainer')) {
-            const repAnimContainer = document.createElement('div');
-            repAnimContainer.id = "repAnimationContainer";
-            repAnimContainer.className = "rep-animation-container";
-            // Create vertical bar element
-            const verticalBar = document.createElement('div');
-            verticalBar.className = "vertical-bar";
-            const verticalFill = document.createElement('div');
-            verticalFill.className = "vertical-fill";
-            verticalBar.appendChild(verticalFill);
-            // Create rep countdown text element
-            const repCountdownText = document.createElement('div');
-            repCountdownText.id = "repCountdownText";
-            repCountdownText.className = "rep-countdown";
-            repCountdownText.innerText = "4";
-            // Append both elements to container
-            repAnimContainer.appendChild(verticalBar);
-            repAnimContainer.appendChild(repCountdownText);
-            // Insert the rep animation container after the exercise name element
-            exerciseNameEl.parentNode.insertBefore(repAnimContainer, exerciseNameEl.nextSibling);
-            startRepCountdown();
-          }
+      function initExerciseInfo(){
+        const ex = workout[currentExerciseIndex];
+        const { sets } = EXERCISE_INFO[currentExerciseIndex];
+        exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
+
+        if (ex.type === 'type1' && ex.maxWeight !== undefined) {
+          exerciseChartEl.innerHTML = buildType1Table(ex);
         } else {
-          exerciseNameEl.style.display = 'block';
-          exerciseNameEl.innerHTML = `
-            ${exercise.exercise_name} - Set ${currentSet} of ${sets}<br>
-            <span style="font-weight:normal; font-size:0.9rem;">
-              ${fetchPreviousPerformance(exercise)}
-            </span>
-          `;
-          const existingAnim = document.getElementById('repAnimationContainer');
-          if (existingAnim) {
-            existingAnim.remove();
-            clearInterval(repCountdownInterval);
+          if (ex.lastPerformance) {
+            exerciseChartEl.innerHTML = fetchPreviousPerformance(ex);
+          } else {
+            exerciseChartEl.innerHTML = 'No performance data available';
           }
         }
-        document.getElementById('timer').style.display = 'block';
-        timeRemaining = exerciseDuration;
-        timeRemainingEl.innerText = timeRemaining;
-        halfwayPlayed = false;
-        const halfwayMarker = Math.floor(timeRemaining / 2);
-        timerInterval = setInterval(() => {
-          timeRemaining--;
-          timeRemainingEl.innerText = timeRemaining;
-          if (!halfwayPlayed && timeRemaining === halfwayMarker) {
-            halfwaySound.currentTime = 0;
-            halfwaySound.play();
-            halfwayPlayed = true;
-          }
-          if (timeRemaining === 5) {
-            countdownAudio.currentTime = 0;
+      }
+
+      window.addEventListener('DOMContentLoaded', () => {
+        initExerciseInfo();
+      });
+
+      function updateExerciseHeading(){
+        const ex = workout[currentExerciseIndex];
+        const { sets } = EXERCISE_INFO[currentExerciseIndex];
+        exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
+      }
+
+      function readyButtonClicked(){
+        readyButtonEl.style.display='none';
+        startPrepTimer();
+      }
+      function startPrepTimer(){
+        prepTimerEl.style.display='block';
+        prepInterval=setInterval(()=>{
+          prepTimeRemaining--;
+          prepRemainingEl.innerText=prepTimeRemaining;
+          if(prepTimeRemaining===5){
+            countdownAudio.currentTime=0;
             countdownAudio.play();
           }
-          if (timeRemaining <= 0) {
+          if(prepTimeRemaining<=0){
+            clearInterval(prepInterval);
+            prepTimerEl.style.display='none';
+            startTimer();
+          }
+        },1000);
+      }
+
+      function startTimer(){
+        updateExerciseHeading();
+        timerEl.style.display='block';
+
+        const ex=workout[currentExerciseIndex];
+        const { exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
+        timeRemaining=exerciseDuration;
+        timeRemainingEl.innerText=timeRemaining;
+        halfwayPlayed=false;
+
+        if(ex.type==='type1' && ex.maxWeight!==undefined){
+          if(!document.getElementById('repAnimationContainer')){
+            addRepAnimation();
+          }
+        } else {
+          removeRepAnimationIfPresent();
+        }
+
+        timerInterval=setInterval(()=>{
+          timeRemaining--;
+          timeRemainingEl.innerText=timeRemaining;
+
+          const halfwayMarker=Math.floor(exerciseDuration/2);
+          if(!halfwayPlayed && timeRemaining===halfwayMarker){
+            halfwaySound.currentTime=0;
+            halfwaySound.play();
+            halfwayPlayed=true;
+          }
+          if(timeRemaining===5){
+            countdownAudio.currentTime=0;
+            countdownAudio.play();
+          }
+          if(timeRemaining<=0){
             clearInterval(timerInterval);
-            bell.currentTime = 0;
+            bell.currentTime=0;
             bell.play();
-            // Remove rep animation when set completes
-            const anim = document.getElementById('repAnimationContainer');
-            if (anim) {
-              anim.remove();
-              clearInterval(repCountdownInterval);
-            }
+            removeRepAnimationIfPresent();
             showInputForm();
           }
-        }, 1000);
+        },1000);
       }
 
-      function startRepCountdown() {
-        let repCycleTime = 0;
-        repCountdownInterval = setInterval(() => {
-          repCycleTime = (repCycleTime + 1) % 5;
-          const repTextElem = document.getElementById('repCountdownText');
-          if (repTextElem) {
-            if (repCycleTime < 4) {
-              repTextElem.innerText = 4 - repCycleTime;
+      function addRepAnimation(){
+        const repAnimContainer=document.createElement('div');
+        repAnimContainer.id="repAnimationContainer";
+        repAnimContainer.className="rep-animation-container";
+
+        const verticalBar=document.createElement('div');
+        verticalBar.className="vertical-bar";
+        const verticalFill=document.createElement('div');
+        verticalFill.className="vertical-fill";
+        verticalBar.appendChild(verticalFill);
+
+        const repCountdownText=document.createElement('div');
+        repCountdownText.id="repCountdownText";
+        repCountdownText.className="rep-countdown";
+        repCountdownText.innerText="4";
+
+        repAnimContainer.appendChild(verticalBar);
+        repAnimContainer.appendChild(repCountdownText);
+        exerciseInfoEl.appendChild(repAnimContainer);
+
+        startRepCountdown();
+      }
+      function removeRepAnimationIfPresent(){
+        const anim=document.getElementById('repAnimationContainer');
+        if(anim){
+          anim.remove();
+          clearInterval(repCountdownInterval);
+        }
+      }
+      function startRepCountdown(){
+        let repCycleTime=0;
+        repCountdownInterval=setInterval(()=>{
+          repCycleTime=(repCycleTime+1)%5;
+          const repTextElem=document.getElementById('repCountdownText');
+          if(repTextElem){
+            if(repCycleTime<4){
+              repTextElem.innerText=4-repCycleTime;
             } else {
-              repTextElem.innerText = "UP";
+              repTextElem.innerText="UP";
             }
           }
-        }, 1000);
+        },1000);
       }
 
-      function showInputForm() {
-        inputFormEl.style.display = 'block';
-        weightInputEl.value = '';
-        repsInputEl.value = '';
-        feedbackMessageEl.innerText = '';
+      function showInputForm(){
+        inputFormEl.style.display='block';
+        weightInputEl.value='';
+        repsInputEl.value='';
+        feedbackMessageEl.innerText='';
         weightInputEl.focus();
       }
-
-      async function submitSetData() {
-        const weightStr = weightInputEl.value;
-        const repsStr = repsInputEl.value;
-        if (weightStr === "" || repsStr === "") {
+      async function submitSetData(){
+        const weightStr=weightInputEl.value;
+        const repsStr=repsInputEl.value;
+        if(!weightStr||!repsStr){
           alert('Please enter valid weight and reps');
           return;
         }
-        const weight = Number(weightStr);
-        const reps = Number(repsStr);
-        if (isNaN(weight) || isNaN(reps)) {
+        const weight=Number(weightStr), reps=Number(repsStr);
+        if(isNaN(weight)||isNaN(reps)){
           alert('Please enter valid weight and reps');
           return;
         }
-        const exercise = workout[currentExerciseIndex];
-        try {
-          const saveResp = await fetch('/save-workout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              exercise_name: exercise.exercise_name,
-              muscle_group: exercise.muscle_group,
+        const ex=workout[currentExerciseIndex];
+        try{
+          const saveResp=await fetch('/save-workout',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+              exercise_name:ex.exercise_name,
+              muscle_group:ex.muscle_group,
               weight,
               reps
             })
           });
-          if (!saveResp.ok) {
+          if(!saveResp.ok){
             alert('Error saving data');
             return;
           }
-          const perfResp = await fetch('/get-updated-performance', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ exercise_name: exercise.exercise_name })
+          const perfResp=await fetch('/get-updated-performance',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({ exercise_name:ex.exercise_name })
           });
-          if (!perfResp.ok) {
+          if(!perfResp.ok){
             alert('Error fetching updated performance');
             return;
           }
-          const perfData = await perfResp.json();
-          workout[currentExerciseIndex].lastPerformance = perfData.lastPerformance;
-          feedbackMessageEl.innerText = 'Data saved!';
-          setTimeout(() => {
-            feedbackMessageEl.innerText = '';
+          const perfData=await perfResp.json();
+          ex.lastPerformance=perfData.lastPerformance;
+
+          feedbackMessageEl.innerText='Data saved!';
+          setTimeout(()=>{
+            feedbackMessageEl.innerText='';
             proceedToNextSetOrExercise();
-          }, 1000);
-        } catch (error) {
-          console.error('Error saving set data or fetching performance:', error);
+          },1000);
+        } catch(err){
+          console.error('Error saving/fetching data:', err);
           alert('Error saving/fetching data');
         }
       }
 
-      function proceedToNextSetOrExercise() {
+      function proceedToNextSetOrExercise(){
         const { sets, intraRest, postExerciseRest } = EXERCISE_INFO[currentExerciseIndex];
-        inputFormEl.style.display = 'none';
-        document.getElementById('timer').style.display = 'none';
-        if (currentSet < sets) {
+        inputFormEl.style.display='none';
+        timerEl.style.display='none';
+
+        if(currentSet<sets){
           currentSet++;
           startRestTimer(intraRest);
         } else {
-          currentSet = 1;
+          currentSet=1;
           currentExerciseIndex++;
-          if (currentExerciseIndex >= EXERCISE_INFO.length) {
-            window.location.href = '/workout-complete';
+          if(currentExerciseIndex>=EXERCISE_INFO.length){
+            window.location.href='/workout-complete';
           } else {
-            startNextExercisePreview(postExerciseRest || 60);
+            initExerciseInfo();
+            startNextExercisePreview(postExerciseRest||60);
           }
         }
       }
 
-      function startRestTimer(duration) {
-        const exercise = workout[currentExerciseIndex];
-        const { sets } = EXERCISE_INFO[currentExerciseIndex];
-        let displayText = '';
-        if (exercise.type === 'type1' || exercise.maxWeight !== undefined) {
-          const max = Number(exercise.maxWeight) || 0;
-          let recNext = '';
-          if (currentSet === 1) {
-            recNext = Math.round(max * type1Percentages[2]); // For set 2 (85%)
-          } else if (currentSet === 2) {
-            recNext = Math.round(max * type1Percentages[3]); // For set 3 (100%)
-          } else {
-            recNext = 'N/A';
-          }
-          displayText = `Next set: ${recNext} lbs`;
-        } else {
-          displayText = fetchPreviousPerformance(exercise);
-        }
-        exerciseNameEl.innerHTML = `
-          ${exercise.exercise_name} - Set ${currentSet} of ${EXERCISE_INFO[currentExerciseIndex].sets}<br>
-          <span style="font-weight:normal; font-size:0.9rem;">${displayText}</span>
-        `;
-        exerciseNameEl.style.display = 'block';
-        restTimerEl.style.display = 'block';
-        restTimeRemaining = duration;
-        restRemainingEl.innerText = restTimeRemaining;
-        if (restInterval) clearInterval(restInterval);
-        restInterval = setInterval(() => {
+      function startRestTimer(duration){
+        updateExerciseHeading();
+        restTimerEl.style.display='block';
+        restTimeRemaining=duration;
+        restRemainingEl.innerText=restTimeRemaining;
+
+        clearInterval(restInterval);
+        restInterval=setInterval(()=>{
           restTimeRemaining--;
-          restRemainingEl.innerText = restTimeRemaining;
-          if (restTimeRemaining === 5) {
-            countdownAudio.currentTime = 0;
+          restRemainingEl.innerText=restTimeRemaining;
+          if(restTimeRemaining===5){
+            countdownAudio.currentTime=0;
             countdownAudio.play();
           }
-          if (restTimeRemaining <= 0) {
+          if(restTimeRemaining<=0){
             clearInterval(restInterval);
-            restTimerEl.style.display = 'none';
+            restTimerEl.style.display='none';
             startTimer();
           }
-        }, 1000);
+        },1000);
       }
 
-      function startNextExercisePreview(prepDuration) {
-        prepTimerEl.style.display = 'block';
-        restTimerEl.style.display = 'none';
-        exerciseNameEl.style.display = 'none';
-        inputFormEl.style.display = 'none';
-        const nextExercise = workout[currentExerciseIndex];
-        if (!nextExercise) {
-          window.location.href = '/workout-complete';
-          return;
-        }
-        prepTimerEl.querySelector('h2').innerText = nextExercise.exercise_name || 'Exercise Name Not Available';
-        prepTimerEl.querySelector('p').innerText = fetchPreviousPerformance(nextExercise);
-        let nextPrepTimeRemaining = prepDuration;
-        prepRemainingEl.innerText = nextPrepTimeRemaining;
-        if (prepInterval) clearInterval(prepInterval);
-        prepInterval = setInterval(() => {
-          nextPrepTimeRemaining--;
-          prepRemainingEl.innerText = nextPrepTimeRemaining;
-          if (nextPrepTimeRemaining === 5) {
-            countdownAudio.currentTime = 0;
+      function startNextExercisePreview(prepDuration){
+        prepTimeRemaining=prepDuration;
+        prepTimerEl.style.display='block';
+
+        prepInterval=setInterval(()=>{
+          prepTimeRemaining--;
+          prepRemainingEl.innerText=prepTimeRemaining;
+          if(prepTimeRemaining===5){
+            countdownAudio.currentTime=0;
             countdownAudio.play();
           }
-          if (nextPrepTimeRemaining <= 0) {
+          if(prepTimeRemaining<=0){
             clearInterval(prepInterval);
-            prepTimerEl.style.display = 'none';
+            prepTimerEl.style.display='none';
             startTimer();
           }
-        }, 1000);
+        },1000);
       }
     </script>
-  </div><!-- end .container -->
+  </div>
 </body>
 </html>
