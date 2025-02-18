@@ -34,7 +34,7 @@
       font-size: 1.5rem;
     }
 
-    /* Single container for exercise info + chart, always visible */
+    /* Single container for the exercise info + chart, always visible */
     #exercise-info {
       margin: 0 auto 1rem auto;
       width: 100%;
@@ -64,7 +64,7 @@
       box-sizing: border-box;
     }
 
-    /* Input Form => Now a real <form> so pressing Enter triggers submit */
+    /* Input Form => real <form> for ENTER auto-submit */
     #input-form {
       display: none;
       margin: 1rem auto 0 auto;
@@ -153,8 +153,8 @@
     }
     @keyframes drainFill {
       0% { transform: scaleY(1); }
-      80% { transform: scaleY(0); }
-      100% { transform: scaleY(1); }
+      80%{ transform: scaleY(0); }
+      100%{ transform: scaleY(1); }
     }
     .rep-countdown {
       font-size: 2.5rem;
@@ -203,10 +203,14 @@
     }
 
     @media (min-width: 601px) {
-      body { padding: 2rem; }
+      body {
+        padding: 2rem;
+      }
     }
     @media (max-width: 600px) {
-      body { padding: 1rem; }
+      body {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
@@ -215,8 +219,8 @@
     <h1>TOUGH10</h1>
 
     <!-- 
-      #exercise-info: always visible
-      => "Exercise Name - Set X of Y" + chart if type1 or fallback
+      #exercise-info: always visible for entire exercise
+      => "Exercise Name - Set X of Y" + chart if Type1, or fallback for Type2/Type3
     -->
     <div id="exercise-info">
       <div id="exercise-heading"></div>
@@ -224,7 +228,7 @@
       <button id="ready-button" onclick="readyButtonClicked()">I'm Ready!</button>
     </div>
 
-    <!-- 15s prep -->
+    <!-- PREP TIMER -->
     <div id="prep-timer" class="timer-container" style="display:none;">
       Prepare to begin in: <span id="prep-remaining">15</span>s
     </div>
@@ -239,7 +243,7 @@
       Next set begins in: <span id="rest-remaining">30</span>s
     </div>
 
-    <!-- PERFORMANCE DATA FORM => Now a real <form> so hitting Enter triggers submitSetData -->
+    <!-- INPUT FORM => real <form> so pressing ENTER triggers submission -->
     <form id="input-form" onsubmit="event.preventDefault(); submitSetData();">
       <h3>Enter Your Set Data</h3>
       <div class="input-row">
@@ -261,53 +265,62 @@
     <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
 
     <script>
+      // For Type1
       const type1Percentages = { 1: 0.70, 2: 0.85, 3: 1.00 };
-      function roundToNearest5(v){ return Math.round(v/5)*5; }
+      function roundToNearest5(v) {
+        return Math.round(v / 5) * 5;
+      }
 
+      // The workout object, containing up to 3 exercises
       const workout = JSON.parse('<%- JSON.stringify(workout) %>');
+      // The logic for each exercise type
       const EXERCISE_INFO = [
-        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 },
+        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 }, 
         { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
         { sets: 1, exerciseDuration: 90, intraRest: 0,  postExerciseRest: 0 }
       ];
 
       let currentExerciseIndex = 0;
       let currentSet = 1;
-      let timeRemaining, timerInterval, halfwayPlayed = false;
-      let restTimeRemaining, restInterval;
-      let prepTimeRemaining = 15, prepInterval;
+      let timeRemaining;
+      let timerInterval;
+      let halfwayPlayed = false;
+      let restTimeRemaining;
+      let restInterval;
+      let prepTimeRemaining = 15;
+      let prepInterval;
       let repCountdownInterval;
 
-      // DOM
-      const exerciseInfoEl   = document.getElementById('exercise-info');
-      const exerciseHeadingEl= document.getElementById('exercise-heading');
-      const exerciseChartEl  = document.getElementById('exercise-chart');
-      const readyButtonEl    = document.getElementById('ready-button');
+      // DOM references
+      const exerciseInfoEl    = document.getElementById('exercise-info');
+      const exerciseHeadingEl = document.getElementById('exercise-heading');
+      const exerciseChartEl   = document.getElementById('exercise-chart');
+      const readyButtonEl     = document.getElementById('ready-button');
 
-      const prepTimerEl      = document.getElementById('prep-timer');
-      const prepRemainingEl  = document.getElementById('prep-remaining');
+      const prepTimerEl       = document.getElementById('prep-timer');
+      const prepRemainingEl   = document.getElementById('prep-remaining');
 
-      const timerEl          = document.getElementById('timer');
-      const timeRemainingEl  = document.getElementById('time-remaining');
+      const timerEl           = document.getElementById('timer');
+      const timeRemainingEl   = document.getElementById('time-remaining');
 
-      const restTimerEl      = document.getElementById('rest-timer');
-      const restRemainingEl  = document.getElementById('rest-remaining');
+      const restTimerEl       = document.getElementById('rest-timer');
+      const restRemainingEl   = document.getElementById('rest-remaining');
 
-      const inputFormEl      = document.getElementById('input-form');
-      const weightInputEl    = document.getElementById('weight-input');
-      const repsInputEl      = document.getElementById('reps-input');
-      const feedbackMessageEl= document.getElementById('feedback-message');
+      const inputFormEl       = document.getElementById('input-form');
+      const weightInputEl     = document.getElementById('weight-input');
+      const repsInputEl       = document.getElementById('reps-input');
+      const feedbackMessageEl = document.getElementById('feedback-message');
 
-      const countdownAudio   = document.getElementById('countdown');
-      const bell             = document.getElementById('bell');
-      const halfwaySound     = document.getElementById('halfway-sound');
-      const silentAudio      = document.getElementById('silent-audio');
+      const countdownAudio    = document.getElementById('countdown');
+      const bell              = document.getElementById('bell');
+      const halfwaySound      = document.getElementById('halfway-sound');
+      const silentAudio       = document.getElementById('silent-audio');
 
-      if(!workout || workout.length === 0){
+      if (!workout || workout.length === 0) {
         window.location.href = '/generate-workout';
       }
 
-      // Build 4×3 table for Type1
+      // Build the 4×3 table for Type1
       function buildType1Table(ex) {
         const bestW = ex.maxWeight || 0;
         const bestR = ex.repsAtMax || 0;
@@ -320,22 +333,24 @@
             </tr>
             <tr>
               <td>SET 1 (70%)</td>
-              <td>${roundToNearest5(bestW*0.70)} lbs</td>
+              <td>${roundToNearest5(bestW * 0.70)} lbs</td>
               <td>10-12 reps</td>
             </tr>
             <tr>
               <td>SET 2 (85%)</td>
-              <td>${roundToNearest5(bestW*0.85)} lbs</td>
+              <td>${roundToNearest5(bestW * 0.85)} lbs</td>
               <td>10-12 reps</td>
             </tr>
             <tr>
               <td>SET 3 (100%)</td>
-              <td>${roundToNearest5(bestW*1.00)}+ lbs</td>
+              <td>${roundToNearest5(bestW * 1.00)} lbs</td>
               <td>${bestR}+ reps</td>
             </tr>
           </table>
         `;
       }
+
+      // For Type2/Type3 => fallback "Avg Weight / Avg Reps"
       function fetchPreviousPerformance(ex) {
         if (ex.lastPerformance) {
           return `Avg Weight: ${ex.lastPerformance.averageWeight} lbs<br>Avg Reps: ${ex.lastPerformance.averageReps}`;
@@ -343,256 +358,292 @@
         return 'No performance data available';
       }
 
-      function initExerciseInfo(){
+      // Called once on page load and whenever we move to next exercise
+      function initExerciseInfo() {
         const ex = workout[currentExerciseIndex];
         const { sets } = EXERCISE_INFO[currentExerciseIndex];
         exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
 
+        // If Type1 with maxWeight => show the custom table
         if (ex.type === 'type1' && ex.maxWeight !== undefined) {
           exerciseChartEl.innerHTML = buildType1Table(ex);
         } else {
-          if (ex.lastPerformance) {
-            exerciseChartEl.innerHTML = fetchPreviousPerformance(ex);
-          } else {
-            exerciseChartEl.innerHTML = 'No performance data available';
-          }
+          // Type2 or Type3 => fallback to "Avg Weight / Avg Reps"
+          exerciseChartEl.innerHTML = fetchPreviousPerformance(ex);
         }
       }
 
+      // On initial load => fill in the heading + chart
       window.addEventListener('DOMContentLoaded', () => {
         initExerciseInfo();
       });
 
-      function updateExerciseHeading(){
+      // Update just the heading if set changes
+      function updateExerciseHeading() {
         const ex = workout[currentExerciseIndex];
         const { sets } = EXERCISE_INFO[currentExerciseIndex];
         exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
       }
 
-      function readyButtonClicked(){
-        readyButtonEl.style.display='none';
-        startPrepTimer();
+      // "I'm Ready!" => start 15s prep
+      function readyButtonClicked() {
+        readyButtonEl.style.display = 'none';
+        silentAudio.play().then(() => {
+          startPrepTimer();
+        }).catch(err => {
+          console.error('Silent audio failed:', err);
+          alert('Unable to start workout due to audio restrictions.');
+        });
       }
-      function startPrepTimer(){
-        prepTimerEl.style.display='block';
-        prepInterval=setInterval(()=>{
+
+      // 15s Prep
+      function startPrepTimer() {
+        prepTimerEl.style.display = 'block';
+        prepInterval = setInterval(() => {
           prepTimeRemaining--;
-          prepRemainingEl.innerText=prepTimeRemaining;
-          if(prepTimeRemaining===5){
-            countdownAudio.currentTime=0;
+          prepRemainingEl.innerText = prepTimeRemaining;
+          if (prepTimeRemaining === 5) {
+            countdownAudio.currentTime = 0;
             countdownAudio.play();
           }
-          if(prepTimeRemaining<=0){
+          if (prepTimeRemaining <= 0) {
             clearInterval(prepInterval);
-            prepTimerEl.style.display='none';
+            prepTimerEl.style.display = 'none';
             startTimer();
           }
-        },1000);
+        }, 1000);
       }
 
-      function startTimer(){
+      // Start active timer
+      function startTimer() {
         updateExerciseHeading();
-        timerEl.style.display='block';
-
-        const ex=workout[currentExerciseIndex];
+        timerEl.style.display = 'block';
+        const ex = workout[currentExerciseIndex];
         const { exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
-        timeRemaining=exerciseDuration;
-        timeRemainingEl.innerText=timeRemaining;
-        halfwayPlayed=false;
 
-        if(ex.type==='type1' && ex.maxWeight!==undefined){
-          if(!document.getElementById('repAnimationContainer')){
+        timeRemaining = exerciseDuration;
+        timeRemainingEl.innerText = timeRemaining;
+        halfwayPlayed = false;
+
+        // For Type1 => rep animation
+        if (ex.type === 'type1' && ex.maxWeight !== undefined) {
+          if (!document.getElementById('repAnimationContainer')) {
             addRepAnimation();
           }
         } else {
           removeRepAnimationIfPresent();
         }
 
-        timerInterval=setInterval(()=>{
+        timerInterval = setInterval(() => {
           timeRemaining--;
-          timeRemainingEl.innerText=timeRemaining;
+          timeRemainingEl.innerText = timeRemaining;
 
-          const halfwayMarker=Math.floor(exerciseDuration/2);
-          if(!halfwayPlayed && timeRemaining===halfwayMarker){
-            halfwaySound.currentTime=0;
+          const halfwayMarker = Math.floor(exerciseDuration / 2);
+          if (!halfwayPlayed && timeRemaining === halfwayMarker) {
+            halfwaySound.currentTime = 0;
             halfwaySound.play();
-            halfwayPlayed=true;
+            halfwayPlayed = true;
           }
-          if(timeRemaining===5){
-            countdownAudio.currentTime=0;
+          if (timeRemaining === 5) {
+            countdownAudio.currentTime = 0;
             countdownAudio.play();
           }
-          if(timeRemaining<=0){
+          if (timeRemaining <= 0) {
             clearInterval(timerInterval);
-            bell.currentTime=0;
+            bell.currentTime = 0;
             bell.play();
             removeRepAnimationIfPresent();
             showInputForm();
           }
-        },1000);
+        }, 1000);
       }
 
-      function addRepAnimation(){
-        const repAnimContainer=document.createElement('div');
-        repAnimContainer.id="repAnimationContainer";
-        repAnimContainer.className="rep-animation-container";
+      // Rep Animation for Type1
+      function addRepAnimation() {
+        const repAnimContainer = document.createElement('div');
+        repAnimContainer.id = "repAnimationContainer";
+        repAnimContainer.className = "rep-animation-container";
 
-        const verticalBar=document.createElement('div');
-        verticalBar.className="vertical-bar";
-        const verticalFill=document.createElement('div');
-        verticalFill.className="vertical-fill";
+        const verticalBar = document.createElement('div');
+        verticalBar.className = "vertical-bar";
+
+        const verticalFill = document.createElement('div');
+        verticalFill.className = "vertical-fill";
         verticalBar.appendChild(verticalFill);
 
-        const repCountdownText=document.createElement('div');
-        repCountdownText.id="repCountdownText";
-        repCountdownText.className="rep-countdown";
-        repCountdownText.innerText="4";
+        const repCountdownText = document.createElement('div');
+        repCountdownText.id = "repCountdownText";
+        repCountdownText.className = "rep-countdown";
+        repCountdownText.innerText = "4";
 
         repAnimContainer.appendChild(verticalBar);
         repAnimContainer.appendChild(repCountdownText);
-        exerciseInfoEl.appendChild(repAnimContainer);
 
+        exerciseInfoEl.appendChild(repAnimContainer);
         startRepCountdown();
       }
-      function removeRepAnimationIfPresent(){
-        const anim=document.getElementById('repAnimationContainer');
-        if(anim){
+      function removeRepAnimationIfPresent() {
+        const anim = document.getElementById('repAnimationContainer');
+        if (anim) {
           anim.remove();
           clearInterval(repCountdownInterval);
         }
       }
-      function startRepCountdown(){
-        let repCycleTime=0;
-        repCountdownInterval=setInterval(()=>{
-          repCycleTime=(repCycleTime+1)%5;
-          const repTextElem=document.getElementById('repCountdownText');
-          if(repTextElem){
-            if(repCycleTime<4){
-              repTextElem.innerText=4-repCycleTime;
+      function startRepCountdown() {
+        let repCycleTime = 0;
+        repCountdownInterval = setInterval(() => {
+          repCycleTime = (repCycleTime + 1) % 5;
+          const repTextElem = document.getElementById('repCountdownText');
+          if (repTextElem) {
+            if (repCycleTime < 4) {
+              repTextElem.innerText = 4 - repCycleTime;
             } else {
-              repTextElem.innerText="UP";
+              repTextElem.innerText = "UP";
             }
           }
-        },1000);
+        }, 1000);
       }
 
-      function showInputForm(){
-        inputFormEl.style.display='block';
-        weightInputEl.value='';
-        repsInputEl.value='';
-        feedbackMessageEl.innerText='';
+      // After set => show input form
+      function showInputForm() {
+        inputFormEl.style.display = 'block';
+        weightInputEl.value = '';
+        repsInputEl.value   = '';
+        feedbackMessageEl.innerText = '';
         weightInputEl.focus();
       }
-      async function submitSetData(){
-        const weightStr=weightInputEl.value;
-        const repsStr=repsInputEl.value;
-        if(!weightStr||!repsStr){
+
+      // Submitting set data
+      async function submitSetData() {
+        const weightStr = weightInputEl.value;
+        const repsStr   = repsInputEl.value;
+
+        if (!weightStr || !repsStr) {
           alert('Please enter valid weight and reps');
           return;
         }
-        const weight=Number(weightStr), reps=Number(repsStr);
-        if(isNaN(weight)||isNaN(reps)){
+        const weight = Number(weightStr);
+        const reps   = Number(repsStr);
+        if (isNaN(weight) || isNaN(reps)) {
           alert('Please enter valid weight and reps');
           return;
         }
-        const ex=workout[currentExerciseIndex];
-        try{
-          const saveResp=await fetch('/save-workout',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-              exercise_name:ex.exercise_name,
-              muscle_group:ex.muscle_group,
+
+        const ex = workout[currentExerciseIndex];
+        try {
+          // 1) Save data
+          const saveResp = await fetch('/save-workout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              exercise_name: ex.exercise_name,
+              muscle_group: ex.muscle_group,
               weight,
               reps
             })
           });
-          if(!saveResp.ok){
+          if (!saveResp.ok) {
             alert('Error saving data');
             return;
           }
-          const perfResp=await fetch('/get-updated-performance',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({ exercise_name:ex.exercise_name })
+
+          // 2) Fetch updated performance => might contain new average (for Type2/Type3)
+          const perfResp = await fetch('/get-updated-performance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exercise_name: ex.exercise_name })
           });
-          if(!perfResp.ok){
+          if (!perfResp.ok) {
             alert('Error fetching updated performance');
             return;
           }
-          const perfData=await perfResp.json();
-          ex.lastPerformance=perfData.lastPerformance;
+          const perfData = await perfResp.json();
 
-          feedbackMessageEl.innerText='Data saved!';
-          setTimeout(()=>{
-            feedbackMessageEl.innerText='';
+          // 3) Store new lastPerformance
+          ex.lastPerformance = perfData.lastPerformance;
+
+          // (Optional) If Type1 => we might recalc maxWeight if user overcame old PR
+          // (But your server would need to return bestWeight / repsAtMax, etc.)
+
+          // 4) Refresh display => so Type2 or Type3 show new average immediately
+          initExerciseInfo();
+
+          // 5) Feedback
+          feedbackMessageEl.innerText = 'Data saved!';
+          setTimeout(() => {
+            feedbackMessageEl.innerText = '';
             proceedToNextSetOrExercise();
-          },1000);
-        } catch(err){
+          }, 1000);
+
+        } catch (err) {
           console.error('Error saving/fetching data:', err);
           alert('Error saving/fetching data');
         }
       }
 
-      function proceedToNextSetOrExercise(){
+      function proceedToNextSetOrExercise() {
         const { sets, intraRest, postExerciseRest } = EXERCISE_INFO[currentExerciseIndex];
-        inputFormEl.style.display='none';
-        timerEl.style.display='none';
+        inputFormEl.style.display = 'none';
+        timerEl.style.display      = 'none';
 
-        if(currentSet<sets){
+        if (currentSet < sets) {
           currentSet++;
           startRestTimer(intraRest);
         } else {
-          currentSet=1;
+          currentSet = 1;
           currentExerciseIndex++;
-          if(currentExerciseIndex>=EXERCISE_INFO.length){
-            window.location.href='/workout-complete';
+          if (currentExerciseIndex >= EXERCISE_INFO.length) {
+            window.location.href = '/workout-complete';
           } else {
+            // Next exercise => re-init the heading + chart
             initExerciseInfo();
-            startNextExercisePreview(postExerciseRest||60);
+            startNextExercisePreview(postExerciseRest || 60);
           }
         }
       }
 
-      function startRestTimer(duration){
+      // Rest Timer
+      function startRestTimer(duration) {
         updateExerciseHeading();
-        restTimerEl.style.display='block';
-        restTimeRemaining=duration;
-        restRemainingEl.innerText=restTimeRemaining;
+        restTimerEl.style.display = 'block';
+        restTimeRemaining         = duration;
+        restRemainingEl.innerText = restTimeRemaining;
 
         clearInterval(restInterval);
-        restInterval=setInterval(()=>{
+        restInterval = setInterval(() => {
           restTimeRemaining--;
-          restRemainingEl.innerText=restTimeRemaining;
-          if(restTimeRemaining===5){
-            countdownAudio.currentTime=0;
+          restRemainingEl.innerText = restTimeRemaining;
+
+          if (restTimeRemaining === 5) {
+            countdownAudio.currentTime = 0;
             countdownAudio.play();
           }
-          if(restTimeRemaining<=0){
+          if (restTimeRemaining <= 0) {
             clearInterval(restInterval);
-            restTimerEl.style.display='none';
+            restTimerEl.style.display = 'none';
             startTimer();
           }
-        },1000);
+        }, 1000);
       }
 
-      function startNextExercisePreview(prepDuration){
-        prepTimeRemaining=prepDuration;
-        prepTimerEl.style.display='block';
+      function startNextExercisePreview(prepDuration) {
+        prepTimeRemaining = prepDuration;
+        prepTimerEl.style.display = 'block';
 
-        prepInterval=setInterval(()=>{
+        clearInterval(prepInterval);
+        prepInterval = setInterval(() => {
           prepTimeRemaining--;
-          prepRemainingEl.innerText=prepTimeRemaining;
-          if(prepTimeRemaining===5){
-            countdownAudio.currentTime=0;
+          prepRemainingEl.innerText = prepTimeRemaining;
+          if (prepTimeRemaining === 5) {
+            countdownAudio.currentTime = 0;
             countdownAudio.play();
           }
-          if(prepTimeRemaining<=0){
+          if (prepTimeRemaining <= 0) {
             clearInterval(prepInterval);
-            prepTimerEl.style.display='none';
+            prepTimerEl.style.display = 'none';
             startTimer();
           }
-        },1000);
+        }, 1000);
       }
     </script>
   </div>
