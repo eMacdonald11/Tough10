@@ -94,6 +94,7 @@ async function fetchMaxWeight(userId, exerciseName) {
   return { maxWeight: max, repsAtMax };
 }
 
+// Which type (type1, type2, type3) based on index
 function getTypeForIndex(index) {
   if (index === 0) return 'type1';
   if (index === 1) return 'type2';
@@ -110,7 +111,6 @@ async function getRandomExerciseOfType(userId, muscleGroup, dumbbellOnly, type) 
   // If DB Only => eq('dumbbell_only', true)
   if (dumbbellOnly) {
     query = query.eq('dumbbell_only', true);
-    // If your column is text "true"/"false", do eq('dumbbell_only','true')
   }
 
   const { data: groupExercises, error } = await query;
@@ -139,11 +139,13 @@ async function getRandomExerciseOfType(userId, muscleGroup, dumbbellOnly, type) 
     };
   }
 
+  // random pick
   const exercise = typedExercises[Math.floor(Math.random() * typedExercises.length)];
   const lastPerformance = await fetchPerformanceData(userId, exercise.exercise_name);
   let result = { ...exercise, lastPerformance, type };
 
   if (type === 'type1') {
+    // also fetch max
     const maxObj = await fetchMaxWeight(userId, exercise.exercise_name);
     if (maxObj) {
       result.maxWeight = maxObj.maxWeight;
@@ -199,7 +201,7 @@ async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
     return result;
   };
 
-  // 3-exercise plan => type1, type2, type3
+  // type1, type2, type3
   const workout = await Promise.all([
     pickRandom(type1Exercises, 'type1'),
     pickRandom(type2Exercises, 'type2'),
@@ -212,9 +214,8 @@ async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
    Routes
 ========================== */
 
-// -------------- CHANGED THIS: redirect root to /login -------------
+// -------------- CHANGED: root => login -------------
 app.get('/', (req, res) => {
-  // If you want to delete index.ejs entirely, just do this:
   res.redirect('/login');
 });
 
@@ -255,6 +256,7 @@ app.post('/register', async (req, res) => {
     const user = newUser[0];
     req.session.user = { id: user.id, email: user.email };
     req.session.save(() => {
+      // auto-generate chestArmsAndAbs
       res.redirect('/generate-workout?autogen=chestArmsAndAbs');
     });
   } catch (err) {
@@ -300,7 +302,6 @@ app.post('/login', async (req, res) => {
     }
 
     req.session.user = { id: user.id, email: user.email };
-    // auto-generate chestArmsAndAbs 
     res.redirect('/generate-workout?autogen=chestArmsAndAbs');
   } catch (err) {
     console.error('Error during login:', err);
@@ -527,7 +528,7 @@ app.post('/get-updated-performance', isAuthenticated, async (req, res) => {
     return res.json({ lastPerformance: updatedPerformance });
   } catch (err) {
     console.error('Error fetching updated performance:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 });
 

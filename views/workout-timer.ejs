@@ -128,7 +128,7 @@
       color: green;
     }
 
-    /* Rep Animation (Type1) */
+    /* Rep Animation (Type1) => now 4s total: 3s drain, 1s fill */
     .rep-animation-container {
       display: flex;
       align-items: center;
@@ -149,12 +149,12 @@
       background: #556B2F;
       position: absolute;
       transform-origin: bottom;
-      animation: drainFill 5s infinite;
+      animation: drainFill 4s infinite;
     }
     @keyframes drainFill {
-      0% { transform: scaleY(1); }
-      80%{ transform: scaleY(0); }
-      100%{ transform: scaleY(1); }
+      0%   { transform: scaleY(1); }  /* full */
+      75%  { transform: scaleY(0); }  /* after 3s => drained */
+      100% { transform: scaleY(1); }  /* refill in final 1s */
     }
     .rep-countdown {
       font-size: 2.5rem;
@@ -182,7 +182,7 @@
       background: #3F4E24;
     }
 
-    /* 4×3 table for Type1 */
+    /* Type1 table => reversed logic (Set1=100%, Set2=80%, Set3=60%) with rep targets */
     .type1-table {
       width: 100%;
       border-collapse: collapse;
@@ -203,14 +203,10 @@
     }
 
     @media (min-width: 601px) {
-      body {
-        padding: 2rem;
-      }
+      body { padding: 2rem; }
     }
     @media (max-width: 600px) {
-      body {
-        padding: 1rem;
-      }
+      body { padding: 1rem; }
     }
   </style>
 </head>
@@ -219,8 +215,8 @@
     <h1>TOUGH10</h1>
 
     <!-- 
-      #exercise-info: always visible for entire exercise
-      => "Exercise Name - Set X of Y" + chart if Type1, or fallback for Type2/Type3
+      #exercise-info => always visible for entire exercise
+      => "Exercise Name - Set X of Y" + table (Type1) or fallback for Type2/3
     -->
     <div id="exercise-info">
       <div id="exercise-heading"></div>
@@ -243,7 +239,7 @@
       Next set begins in: <span id="rest-remaining">30</span>s
     </div>
 
-    <!-- INPUT FORM => real <form> so pressing ENTER triggers submission -->
+    <!-- INPUT FORM => pressing ENTER => submitSetData -->
     <form id="input-form" onsubmit="event.preventDefault(); submitSetData();">
       <h3>Enter Your Set Data</h3>
       <div class="input-row">
@@ -265,17 +261,68 @@
     <audio id="silent-audio" src="/audio/silent.mp3" preload="auto"></audio>
 
     <script>
-      // For Type1
-      const type1Percentages = { 1: 0.70, 2: 0.85, 3: 1.00 };
+      /*
+        Updated Type1 => set1=100%, set2=80%, set3=60% (reversed approach).
+        rep-cycle => 3s drain, 1s fill => total 4s
+      */
+
+      // Reversed Type1 approach:
+      // Set1 => 100% (6-8 reps)
+      // Set2 => 80% (8-10 reps)
+      // Set3 => 60% (10-12 reps)
       function roundToNearest5(v) {
         return Math.round(v / 5) * 5;
       }
 
-      // The workout object, containing up to 3 exercises
+      // Build the 3-row table for Type1
+      function buildType1Table(ex) {
+        const bestW = ex.maxWeight || 0;
+        const bestR = ex.repsAtMax || 0;
+
+        // Set1 => bestW => 6-8 reps
+        // Set2 => bestW * 0.80 => 8-10 reps
+        // Set3 => bestW * 0.60 => 10-12 reps
+        const set1w = roundToNearest5(bestW * 1.00);
+        const set2w = roundToNearest5(bestW * 0.80);
+        const set3w = roundToNearest5(bestW * 0.60);
+
+        return `
+          <table class="type1-table">
+            <tr class="best-row">
+              <td>BEST SET</td>
+              <td>${bestW} lbs</td>
+              <td>${bestR} reps</td>
+            </tr>
+            <tr>
+              <td>SET 1 (100%)</td>
+              <td>${set1w} lbs</td>
+              <td>6-8 reps</td>
+            </tr>
+            <tr>
+              <td>SET 2 (80%)</td>
+              <td>${set2w} lbs</td>
+              <td>8-10 reps</td>
+            </tr>
+            <tr>
+              <td>SET 3 (60%)</td>
+              <td>${set3w} lbs</td>
+              <td>10-12 reps</td>
+            </tr>
+          </table>
+        `;
+      }
+
+      // fallback => Type2 / Type3
+      function fetchPreviousPerformance(ex) {
+        if (ex.lastPerformance) {
+          return `Avg Weight: ${ex.lastPerformance.averageWeight} lbs<br>Avg Reps: ${ex.lastPerformance.averageReps}`;
+        }
+        return 'No performance data available';
+      }
+
       const workout = JSON.parse('<%- JSON.stringify(workout) %>');
-      // The logic for each exercise type
       const EXERCISE_INFO = [
-        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 }, 
+        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 },
         { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
         { sets: 1, exerciseDuration: 90, intraRest: 0,  postExerciseRest: 0 }
       ];
@@ -291,7 +338,7 @@
       let prepInterval;
       let repCountdownInterval;
 
-      // DOM references
+      // DOM
       const exerciseInfoEl    = document.getElementById('exercise-info');
       const exerciseHeadingEl = document.getElementById('exercise-heading');
       const exerciseChartEl   = document.getElementById('exercise-chart');
@@ -320,72 +367,28 @@
         window.location.href = '/generate-workout';
       }
 
-      // Build the 4×3 table for Type1
-      function buildType1Table(ex) {
-        const bestW = ex.maxWeight || 0;
-        const bestR = ex.repsAtMax || 0;
-        return `
-          <table class="type1-table">
-            <tr class="best-row">
-              <td>BEST SET</td>
-              <td>${bestW} lbs</td>
-              <td>${bestR} reps</td>
-            </tr>
-            <tr>
-              <td>SET 1 (70%)</td>
-              <td>${roundToNearest5(bestW * 0.70)} lbs</td>
-              <td>10-12 reps</td>
-            </tr>
-            <tr>
-              <td>SET 2 (85%)</td>
-              <td>${roundToNearest5(bestW * 0.85)} lbs</td>
-              <td>10-12 reps</td>
-            </tr>
-            <tr>
-              <td>SET 3 (100%)</td>
-              <td>${roundToNearest5(bestW * 1.00)} lbs</td>
-              <td>${bestR}+ reps</td>
-            </tr>
-          </table>
-        `;
-      }
-
-      // For Type2/Type3 => fallback "Avg Weight / Avg Reps"
-      function fetchPreviousPerformance(ex) {
-        if (ex.lastPerformance) {
-          return `Avg Weight: ${ex.lastPerformance.averageWeight} lbs<br>Avg Reps: ${ex.lastPerformance.averageReps}`;
-        }
-        return 'No performance data available';
-      }
-
-      // Called once on page load and whenever we move to next exercise
       function initExerciseInfo() {
         const ex = workout[currentExerciseIndex];
         const { sets } = EXERCISE_INFO[currentExerciseIndex];
         exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
 
-        // If Type1 with maxWeight => show the custom table
         if (ex.type === 'type1' && ex.maxWeight !== undefined) {
           exerciseChartEl.innerHTML = buildType1Table(ex);
         } else {
-          // Type2 or Type3 => fallback to "Avg Weight / Avg Reps"
           exerciseChartEl.innerHTML = fetchPreviousPerformance(ex);
         }
       }
 
-      // On initial load => fill in the heading + chart
       window.addEventListener('DOMContentLoaded', () => {
         initExerciseInfo();
       });
 
-      // Update just the heading if set changes
       function updateExerciseHeading() {
         const ex = workout[currentExerciseIndex];
         const { sets } = EXERCISE_INFO[currentExerciseIndex];
         exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
       }
 
-      // "I'm Ready!" => start 15s prep
       function readyButtonClicked() {
         readyButtonEl.style.display = 'none';
         silentAudio.play().then(() => {
@@ -396,7 +399,6 @@
         });
       }
 
-      // 15s Prep
       function startPrepTimer() {
         prepTimerEl.style.display = 'block';
         prepInterval = setInterval(() => {
@@ -414,18 +416,16 @@
         }, 1000);
       }
 
-      // Start active timer
       function startTimer() {
         updateExerciseHeading();
         timerEl.style.display = 'block';
+
         const ex = workout[currentExerciseIndex];
         const { exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
-
         timeRemaining = exerciseDuration;
         timeRemainingEl.innerText = timeRemaining;
         halfwayPlayed = false;
 
-        // For Type1 => rep animation
         if (ex.type === 'type1' && ex.maxWeight !== undefined) {
           if (!document.getElementById('repAnimationContainer')) {
             addRepAnimation();
@@ -458,7 +458,7 @@
         }, 1000);
       }
 
-      // Rep Animation for Type1
+      // 4s animation => 3s drain, 1s fill
       function addRepAnimation() {
         const repAnimContainer = document.createElement('div');
         repAnimContainer.id = "repAnimationContainer";
@@ -466,7 +466,6 @@
 
         const verticalBar = document.createElement('div');
         verticalBar.className = "vertical-bar";
-
         const verticalFill = document.createElement('div');
         verticalFill.className = "vertical-fill";
         verticalBar.appendChild(verticalFill);
@@ -482,6 +481,7 @@
         exerciseInfoEl.appendChild(repAnimContainer);
         startRepCountdown();
       }
+
       function removeRepAnimationIfPresent() {
         const anim = document.getElementById('repAnimationContainer');
         if (anim) {
@@ -489,14 +489,16 @@
           clearInterval(repCountdownInterval);
         }
       }
+
+      // rep countdown => 4s cycle
       function startRepCountdown() {
         let repCycleTime = 0;
         repCountdownInterval = setInterval(() => {
-          repCycleTime = (repCycleTime + 1) % 5;
+          repCycleTime = (repCycleTime + 1) % 4;
           const repTextElem = document.getElementById('repCountdownText');
           if (repTextElem) {
-            if (repCycleTime < 4) {
-              repTextElem.innerText = 4 - repCycleTime;
+            if (repCycleTime < 3) {
+              repTextElem.innerText = 3 - repCycleTime;
             } else {
               repTextElem.innerText = "UP";
             }
@@ -504,7 +506,6 @@
         }, 1000);
       }
 
-      // After set => show input form
       function showInputForm() {
         inputFormEl.style.display = 'block';
         weightInputEl.value = '';
@@ -513,7 +514,6 @@
         weightInputEl.focus();
       }
 
-      // Submitting set data
       async function submitSetData() {
         const weightStr = weightInputEl.value;
         const repsStr   = repsInputEl.value;
@@ -531,7 +531,6 @@
 
         const ex = workout[currentExerciseIndex];
         try {
-          // 1) Save data
           const saveResp = await fetch('/save-workout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -547,7 +546,7 @@
             return;
           }
 
-          // 2) Fetch updated performance => might contain new average (for Type2/Type3)
+          // fetch updated performance => might contain new average for T2/T3
           const perfResp = await fetch('/get-updated-performance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -558,17 +557,11 @@
             return;
           }
           const perfData = await perfResp.json();
-
-          // 3) Store new lastPerformance
           ex.lastPerformance = perfData.lastPerformance;
 
-          // (Optional) If Type1 => we might recalc maxWeight if user overcame old PR
-          // (But your server would need to return bestWeight / repsAtMax, etc.)
-
-          // 4) Refresh display => so Type2 or Type3 show new average immediately
+          // re-init => so T2/T3 can see new avg
           initExerciseInfo();
 
-          // 5) Feedback
           feedbackMessageEl.innerText = 'Data saved!';
           setTimeout(() => {
             feedbackMessageEl.innerText = '';
@@ -595,14 +588,12 @@
           if (currentExerciseIndex >= EXERCISE_INFO.length) {
             window.location.href = '/workout-complete';
           } else {
-            // Next exercise => re-init the heading + chart
             initExerciseInfo();
             startNextExercisePreview(postExerciseRest || 60);
           }
         }
       }
 
-      // Rest Timer
       function startRestTimer(duration) {
         updateExerciseHeading();
         restTimerEl.style.display = 'block';
@@ -613,7 +604,6 @@
         restInterval = setInterval(() => {
           restTimeRemaining--;
           restRemainingEl.innerText = restTimeRemaining;
-
           if (restTimeRemaining === 5) {
             countdownAudio.currentTime = 0;
             countdownAudio.play();
