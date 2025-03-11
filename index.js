@@ -214,7 +214,7 @@ async function generateWorkout(userId, muscleGroup, dumbbellOnly) {
    Routes
 ========================== */
 
-// -------------- CHANGED: root => login -------------
+// Root => login
 app.get('/', (req, res) => {
   res.redirect('/login');
 });

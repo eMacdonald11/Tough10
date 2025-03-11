@@ -128,7 +128,7 @@
       color: green;
     }
 
-    /* Rep Animation (Type1) => now 4s total: 3s drain, 1s fill */
+    /* Rep Animation (Type1) => 4s total: 3s drain, 1s fill */
     .rep-animation-container {
       display: flex;
       align-items: center;
@@ -149,12 +149,12 @@
       background: #556B2F;
       position: absolute;
       transform-origin: bottom;
-      animation: drainFill 4s infinite;
+      animation: drainFill 4s infinite; /* 3s drain, 1s fill */
     }
     @keyframes drainFill {
-      0%   { transform: scaleY(1); }  /* full */
-      75%  { transform: scaleY(0); }  /* after 3s => drained */
-      100% { transform: scaleY(1); }  /* refill in final 1s */
+      0%   { transform: scaleY(1); }
+      75%  { transform: scaleY(0); }
+      100% { transform: scaleY(1); }
     }
     .rep-countdown {
       font-size: 2.5rem;
@@ -182,7 +182,13 @@
       background: #3F4E24;
     }
 
-    /* Type1 table => reversed logic (Set1=100%, Set2=80%, Set3=60%) with rep targets */
+    /* 
+      Type1 table => reversed logic:
+        Set1=100% (32s), Set2=80% (40s), Set3=60% (48s)
+        with recommended rep ranges.
+      We highlight either the Set1 weight cell or the Set1 reps cell
+      if bestR >= 8 or <= 7.
+    */
     .type1-table {
       width: 100%;
       border-collapse: collapse;
@@ -201,6 +207,10 @@
       background: #ffe0b3;
       font-weight: 700;
     }
+    /* Subtle green highlight for recommendations */
+    .highlight-green {
+      background-color: #e5ffe5 !important;
+    }
 
     @media (min-width: 601px) {
       body { padding: 2rem; }
@@ -214,10 +224,7 @@
   <div class="container">
     <h1>TOUGH10</h1>
 
-    <!-- 
-      #exercise-info => always visible for entire exercise
-      => "Exercise Name - Set X of Y" + table (Type1) or fallback for Type2/3
-    -->
+    <!-- #exercise-info => always visible for entire exercise -->
     <div id="exercise-info">
       <div id="exercise-heading"></div>
       <div id="exercise-chart"></div>
@@ -262,29 +269,33 @@
 
     <script>
       /*
-        Updated Type1 => set1=100%, set2=80%, set3=60% (reversed approach).
-        rep-cycle => 3s drain, 1s fill => total 4s
+        For Type1:
+          - Set 1 => 100%, 32s
+          - Set 2 => 80%, 40s
+          - Set 3 => 60%, 48s
+        Halfway beep => 16s (set1), 20s (set2), 24s (set3).
+        Other functionality remains unchanged.
       */
 
-      // Reversed Type1 approach:
-      // Set1 => 100% (6-8 reps)
-      // Set2 => 80% (8-10 reps)
-      // Set3 => 60% (10-12 reps)
+      // Round to 5
       function roundToNearest5(v) {
         return Math.round(v / 5) * 5;
       }
 
-      // Build the 3-row table for Type1
+      // Build Type1 table, highlight the Set1 weight cell if reps >= 8,
+      // otherwise highlight the Set1 reps cell if reps <= 7
       function buildType1Table(ex) {
         const bestW = ex.maxWeight || 0;
         const bestR = ex.repsAtMax || 0;
 
-        // Set1 => bestW => 6-8 reps
-        // Set2 => bestW * 0.80 => 8-10 reps
-        // Set3 => bestW * 0.60 => 10-12 reps
-        const set1w = roundToNearest5(bestW * 1.00);
-        const set2w = roundToNearest5(bestW * 0.80);
-        const set3w = roundToNearest5(bestW * 0.60);
+        // Condition for highlight
+        const highlightWeight = (bestR >= 8) ? 'highlight-green' : '';
+        const highlightReps   = (bestR <= 7) ? 'highlight-green' : '';
+
+        // recommended weights
+        const set1w = roundToNearest5(bestW);        // 100%
+        const set2w = roundToNearest5(bestW * 0.80); // 80%
+        const set3w = roundToNearest5(bestW * 0.60); // 60%
 
         return `
           <table class="type1-table">
@@ -295,8 +306,9 @@
             </tr>
             <tr>
               <td>SET 1 (100%)</td>
-              <td>${set1w} lbs</td>
-              <td>6-8 reps</td>
+              <!-- If repsAtMax >=8 => highlight the weight cell, else highlight the reps cell -->
+              <td class="${highlightWeight}">${set1w} lbs</td>
+              <td class="${highlightReps}">6-8 reps</td>
             </tr>
             <tr>
               <td>SET 2 (80%)</td>
@@ -312,7 +324,7 @@
         `;
       }
 
-      // fallback => Type2 / Type3
+      // fallback => Type2/Type3 => avg
       function fetchPreviousPerformance(ex) {
         if (ex.lastPerformance) {
           return `Avg Weight: ${ex.lastPerformance.averageWeight} lbs<br>Avg Reps: ${ex.lastPerformance.averageReps}`;
@@ -320,12 +332,29 @@
         return 'No performance data available';
       }
 
-      const workout = JSON.parse('<%- JSON.stringify(workout) %>');
+      // Timings:
+      // Type1 => 3 sets => each set has custom durations (32,40,48)
+      // Type2 => 4 sets => 30s each
+      // Type3 => 1 set  => 90s
       const EXERCISE_INFO = [
-        { sets: 3, exerciseDuration: 50, intraRest: 30, postExerciseRest: 60 },
+        {
+          sets: 3,
+          exerciseDuration: 50,  // placeholder
+          intraRest: 30,
+          postExerciseRest: 60
+        },
         { sets: 4, exerciseDuration: 30, intraRest: 20, postExerciseRest: 60 },
         { sets: 1, exerciseDuration: 90, intraRest: 0,  postExerciseRest: 0 }
       ];
+
+      // Return correct set duration for Type1
+      function getType1Duration(setNum) {
+        if (setNum === 1) return 32; 
+        if (setNum === 2) return 40; 
+        return 48; // set3
+      }
+
+      const workout = JSON.parse('<%- JSON.stringify(workout) %>');
 
       let currentExerciseIndex = 0;
       let currentSet = 1;
@@ -367,21 +396,22 @@
         window.location.href = '/generate-workout';
       }
 
+      // On load => fill heading + chart
+      window.addEventListener('DOMContentLoaded', () => {
+        initExerciseInfo();
+      });
+
       function initExerciseInfo() {
         const ex = workout[currentExerciseIndex];
         const { sets } = EXERCISE_INFO[currentExerciseIndex];
         exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
 
-        if (ex.type === 'type1' && ex.maxWeight !== undefined) {
+        if (ex.type === 'type1') {
           exerciseChartEl.innerHTML = buildType1Table(ex);
         } else {
           exerciseChartEl.innerHTML = fetchPreviousPerformance(ex);
         }
       }
-
-      window.addEventListener('DOMContentLoaded', () => {
-        initExerciseInfo();
-      });
 
       function updateExerciseHeading() {
         const ex = workout[currentExerciseIndex];
@@ -389,6 +419,7 @@
         exerciseHeadingEl.innerHTML = `${ex.exercise_name} - Set ${currentSet} of ${sets}`;
       }
 
+      // "I'm Ready!"
       function readyButtonClicked() {
         readyButtonEl.style.display = 'none';
         silentAudio.play().then(() => {
@@ -399,8 +430,12 @@
         });
       }
 
+      // 15s prep
       function startPrepTimer() {
+        prepTimeRemaining = 15;
         prepTimerEl.style.display = 'block';
+
+        clearInterval(prepInterval);
         prepInterval = setInterval(() => {
           prepTimeRemaining--;
           prepRemainingEl.innerText = prepTimeRemaining;
@@ -416,17 +451,24 @@
         }, 1000);
       }
 
+      // Start the main timer
       function startTimer() {
         updateExerciseHeading();
         timerEl.style.display = 'block';
 
         const ex = workout[currentExerciseIndex];
-        const { exerciseDuration } = EXERCISE_INFO[currentExerciseIndex];
+        const { sets } = EXERCISE_INFO[currentExerciseIndex];
+
+        let exerciseDuration = EXERCISE_INFO[currentExerciseIndex].exerciseDuration;
+        if (ex.type === 'type1') {
+          exerciseDuration = getType1Duration(currentSet);
+        }
         timeRemaining = exerciseDuration;
         timeRemainingEl.innerText = timeRemaining;
         halfwayPlayed = false;
 
-        if (ex.type === 'type1' && ex.maxWeight !== undefined) {
+        // always show bar for Type1
+        if (ex.type === 'type1') {
           if (!document.getElementById('repAnimationContainer')) {
             addRepAnimation();
           }
@@ -434,6 +476,7 @@
           removeRepAnimationIfPresent();
         }
 
+        clearInterval(timerInterval);
         timerInterval = setInterval(() => {
           timeRemaining--;
           timeRemainingEl.innerText = timeRemaining;
@@ -458,7 +501,7 @@
         }, 1000);
       }
 
-      // 4s animation => 3s drain, 1s fill
+      // Rep animation => 4s cycle => 3s drain, 1s fill
       function addRepAnimation() {
         const repAnimContainer = document.createElement('div');
         repAnimContainer.id = "repAnimationContainer";
@@ -466,6 +509,7 @@
 
         const verticalBar = document.createElement('div');
         verticalBar.className = "vertical-bar";
+
         const verticalFill = document.createElement('div');
         verticalFill.className = "vertical-fill";
         verticalBar.appendChild(verticalFill);
@@ -473,7 +517,7 @@
         const repCountdownText = document.createElement('div');
         repCountdownText.id = "repCountdownText";
         repCountdownText.className = "rep-countdown";
-        repCountdownText.innerText = "4";
+        repCountdownText.innerText = "3";
 
         repAnimContainer.appendChild(verticalBar);
         repAnimContainer.appendChild(repCountdownText);
@@ -481,7 +525,6 @@
         exerciseInfoEl.appendChild(repAnimContainer);
         startRepCountdown();
       }
-
       function removeRepAnimationIfPresent() {
         const anim = document.getElementById('repAnimationContainer');
         if (anim) {
@@ -489,23 +532,22 @@
           clearInterval(repCountdownInterval);
         }
       }
-
-      // rep countdown => 4s cycle
+      // 4s cycle => 3..2..1..UP
       function startRepCountdown() {
         let repCycleTime = 0;
         repCountdownInterval = setInterval(() => {
           repCycleTime = (repCycleTime + 1) % 4;
           const repTextElem = document.getElementById('repCountdownText');
-          if (repTextElem) {
-            if (repCycleTime < 3) {
-              repTextElem.innerText = 3 - repCycleTime;
-            } else {
-              repTextElem.innerText = "UP";
-            }
+          if (!repTextElem) return;
+          if (repCycleTime < 3) {
+            repTextElem.innerText = (3 - repCycleTime).toString();
+          } else {
+            repTextElem.innerText = "UP";
           }
         }, 1000);
       }
 
+      // Show performance form
       function showInputForm() {
         inputFormEl.style.display = 'block';
         weightInputEl.value = '';
@@ -517,7 +559,6 @@
       async function submitSetData() {
         const weightStr = weightInputEl.value;
         const repsStr   = repsInputEl.value;
-
         if (!weightStr || !repsStr) {
           alert('Please enter valid weight and reps');
           return;
@@ -531,6 +572,7 @@
 
         const ex = workout[currentExerciseIndex];
         try {
+          // Save data
           const saveResp = await fetch('/save-workout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -546,7 +588,7 @@
             return;
           }
 
-          // fetch updated performance => might contain new average for T2/T3
+          // fetch updated performance => might have new avg for T2/T3
           const perfResp = await fetch('/get-updated-performance', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -559,7 +601,7 @@
           const perfData = await perfResp.json();
           ex.lastPerformance = perfData.lastPerformance;
 
-          // re-init => so T2/T3 can see new avg
+          // re-init => so T2/T3 can see new average
           initExerciseInfo();
 
           feedbackMessageEl.innerText = 'Data saved!';
@@ -575,9 +617,11 @@
       }
 
       function proceedToNextSetOrExercise() {
-        const { sets, intraRest, postExerciseRest } = EXERCISE_INFO[currentExerciseIndex];
+        const exInfo = EXERCISE_INFO[currentExerciseIndex];
+        const { sets, intraRest, postExerciseRest } = exInfo;
+
         inputFormEl.style.display = 'none';
-        timerEl.style.display      = 'none';
+        timerEl.style.display = 'none';
 
         if (currentSet < sets) {
           currentSet++;
@@ -586,24 +630,28 @@
           currentSet = 1;
           currentExerciseIndex++;
           if (currentExerciseIndex >= EXERCISE_INFO.length) {
+            // all done
             window.location.href = '/workout-complete';
           } else {
+            // next exercise
             initExerciseInfo();
             startNextExercisePreview(postExerciseRest || 60);
           }
         }
       }
 
+      // Rest between sets
       function startRestTimer(duration) {
         updateExerciseHeading();
         restTimerEl.style.display = 'block';
-        restTimeRemaining         = duration;
+        restTimeRemaining = duration;
         restRemainingEl.innerText = restTimeRemaining;
 
         clearInterval(restInterval);
         restInterval = setInterval(() => {
           restTimeRemaining--;
           restRemainingEl.innerText = restTimeRemaining;
+
           if (restTimeRemaining === 5) {
             countdownAudio.currentTime = 0;
             countdownAudio.play();
